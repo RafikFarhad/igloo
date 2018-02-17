@@ -2,6 +2,9 @@
 
 namespace Farhad\Igloo;
 
+use Farhad\Igloo\Commands\RequestCommand;
+use Farhad\Igloo\Commands\RouteCommand;
+use Farhad\Igloo\Commands\TransformerCommand;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 use Farhad\Igloo\Commands\IglooCommand;
@@ -21,9 +24,10 @@ class IglooServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../publish/Repositories/' => app_path('Repositories'),
             __DIR__ . '/../publish/Services/' => app_path('Services'),
-//            __DIR__ . '/../publish/BaseSettings/' => app_path('BaseSettings'),
-//            __DIR__ . '/../publish/Responses/' => app_path('Responses'),
-//            __DIR__ . '/../publish/Transformers/' => app_path('Transformers'),
+            __DIR__ . '/../publish/BaseSettings/' => app_path('BaseSettings'),
+            __DIR__ . '/../publish/Responses/' => app_path('Responses'),
+            __DIR__ . '/../publish/Transformers/' => app_path('Transformers'),
+            __DIR__ . '/../publish/Requests/' => app_path('Http/Requests'),
         ], 'Farhad-Igloo');
         include __DIR__.'/routes/web.php';
     }
@@ -38,7 +42,10 @@ class IglooServiceProvider extends ServiceProvider
         $this->modelCommandCreator();
         $this->repositoryCommandCreator();
         $this->serviceCommandCreator();
+        $this->transformerCommandCreator();
         $this->iglooCommandCreator();
+        $this->requestCommandCreator();
+        $this->routeCommandCreator();
         $this->app->make('Farhad\Igloo\Controllers\AutomateController');
     }
 
@@ -67,6 +74,31 @@ class IglooServiceProvider extends ServiceProvider
         });
         $this->commands('make.service');
     }
+
+    public function transformerCommandCreator()
+    {
+        $this->app->singleton('make.transformer', function ($app) {
+            return new TransformerCommand($app['files']);
+        });
+        $this->commands('make.transformer');
+    }
+
+    public function requestCommandCreator()
+    {
+        $this->app->singleton('make.request', function ($app) {
+            return new RequestCommand($app['files']);
+        });
+        $this->commands('make.request');
+    }
+
+    public function routeCommandCreator()
+    {
+        $this->app->singleton('make.route', function ($app) {
+            return new RouteCommand($app['files']);
+        });
+        $this->commands('make.route');
+    }
+
 
     public function iglooCommandCreator()
     {

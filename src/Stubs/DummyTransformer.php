@@ -1,10 +1,15 @@
 <?php
 
-namespace App\Transformers\Api;
+/**
+ * Created by Igloo Generator.
+ * Date: DUMMYDATE
+ */
+
+namespace DummyNamespace;
 
 use App\Transformers\ApiTransformerAbstract;
 
-class UserTransformer extends ApiTransformerAbstract
+class DummyTransformer extends ApiTransformerAbstract
 {
 
     /**
@@ -16,10 +21,7 @@ class UserTransformer extends ApiTransformerAbstract
      */
     public function getTransformableFields($entity)
     {
-        return [
-            'user_id' => (int)$entity->id,
-            'name' => $entity->name,
-            'email' => $entity->email,
+        return [/*DummyColumnValues*/
         ];
     }
 }
