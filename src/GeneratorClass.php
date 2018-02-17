@@ -1,6 +1,6 @@
 <?php
 
-namespace InfancyIT\Igloo;
+namespace Farhad\Igloo;
 
 
 use Illuminate\Console\Command;
