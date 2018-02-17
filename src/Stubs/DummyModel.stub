@@ -1,0 +1,12 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Database\Eloquent\Model;
+
+class DummyModel extends Model
+{
+    protected $guarded = [/*GUARDED*/];
+    protected $fillable = [/*FILLABLE*/];
+    //
+}

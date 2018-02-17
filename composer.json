@@ -1,0 +1,16 @@
+{
+    "name": "farhad/igloo",
+    "description": "An automated process for create basic CRUD functionalities",
+    "type": "laralvel-helper",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "RafikFarhad",
+            "email": "rafikfarhad@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "laracasts/generators": "^1.1"
+    }
+}
