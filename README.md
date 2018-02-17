@@ -13,15 +13,15 @@
 ```json
 "farhad/igloo": "*"
 ```
-If your laravel version in >=5.5 you don't need to apply step (2).
+*If your laravel version is >=5.5 you don't need to apply step (2).*
 
 2) Open your `config/app.php` and add the following to the `providers` array:
 
-```php
+```shell
 Farhad\Igloo\IglooServiceProvider::class,
 ```
 
-3) Run the command below to publish the package config file `config/entrust.php` ans select the index of `Farhad\Igloo`: 
+3) Run the command below to publish the package file. Select the index of `Farhad\Igloo`: 
 
 ```shell
 php artisan vendor:publish
@@ -37,22 +37,22 @@ Model will be saved on `app\Model` folder.
 
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-model Book
 ```
 
 If you want to add `fillable` or `guarded` value you may pass the list of columns as well:
 
-```php
+```shell
 php artisan make-model Book --fillable=name,author,published_date
 ```
 or
-```php
+```shell
 php artisan make-model Book --guarded=id
 ```
 or
 
-```php
+```shell
 php artisan make-model Book --fillable=name,author,published_date --guarded=id
 ```
 
@@ -61,7 +61,7 @@ Let's create some basic **Service** which will extends our **BaseService** from 
 
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-service Book
 ```
 
@@ -70,7 +70,7 @@ Let's create some basic **Repository** which will extends our **BaseRepository**
 
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-repository Book
 ```
 
@@ -81,7 +81,7 @@ Transformer will be created in the `app/Transformers/Api` folder.
 
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-transformer Book id,name,author,published_date
 ```
 In the creation of `Transformer` `attributes` list are required. All columns should be separated by a single `,` (comma). This will create the main portion like this
@@ -103,7 +103,7 @@ Transformer will be created in the `app/Request/Api` folder.
 
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-request Book id,name,author,published_date
 ```
 In the creation of `Request` `attributes` list are required. All columns should be separated by a single `,` (comma). This will create the main portion like this
@@ -121,7 +121,7 @@ public function rules()
 You can also create API routes for your model.
 Run the following command on project root.
 
-```php
+```shell
 php artisan make-route Book
 ```
 This command will output like this:
