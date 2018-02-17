@@ -1,13 +1,13 @@
 <?php
 
-namespace InfancyIT\Igloo;
+namespace Farhad\Igloo;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
-use InfancyIT\Igloo\Commands\IglooCommand;
-use InfancyIT\Igloo\Commands\ModelCommand;
-use InfancyIT\Igloo\Commands\RepositoryCommand;
-use InfancyIT\Igloo\Commands\ServiceCommand;
+use Farhad\Igloo\Commands\IglooCommand;
+use Farhad\Igloo\Commands\ModelCommand;
+use Farhad\Igloo\Commands\RepositoryCommand;
+use Farhad\Igloo\Commands\ServiceCommand;
 
 class IglooServiceProvider extends ServiceProvider
 {
@@ -24,7 +24,7 @@ class IglooServiceProvider extends ServiceProvider
 //            __DIR__ . '/../publish/BaseSettings/' => app_path('BaseSettings'),
 //            __DIR__ . '/../publish/Responses/' => app_path('Responses'),
 //            __DIR__ . '/../publish/Transformers/' => app_path('Transformers'),
-        ], 'InfancyIT-Igloo');
+        ], 'Farhad-Igloo');
         include __DIR__.'/routes/web.php';
     }
 
@@ -39,7 +39,7 @@ class IglooServiceProvider extends ServiceProvider
         $this->repositoryCommandCreator();
         $this->serviceCommandCreator();
         $this->iglooCommandCreator();
-        $this->app->make('InfancyIT\Igloo\Controllers\AutomateController');
+        $this->app->make('Farhad\Igloo\Controllers\AutomateController');
     }
 
 

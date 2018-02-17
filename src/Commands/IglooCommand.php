@@ -1,11 +1,11 @@
 <?php
 
-namespace InfancyIT\Igloo\Commands;
+namespace Farhad\Igloo\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
-use InfancyIT\Igloo\GeneratorClass;
+use Farhad\Igloo\GeneratorClass;
 
 class IglooCommand extends Command
 {

@@ -12,5 +12,13 @@
     "require": {},
     "require-dev": {
         "laracasts/generators": "^1.1"
-    }
+    },
+    "autoload": {
+        "classmap": [
+            "src/Commands"
+        ],
+        "psr-4": {
+            "Farhad\\Igloo\\": "src/"
+        }
+    },
 }

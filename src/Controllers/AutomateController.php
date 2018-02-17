@@ -1,6 +1,6 @@
 <?php
 
-namespace InfancyIT\Igloo\Controllers;
+namespace Farhad\Igloo\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
