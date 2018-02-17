@@ -21,4 +21,11 @@
             "Farhad\\Igloo\\": "src/"
         }
     },
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Farhad\\Igloo\\IglooServiceProvider"
+            ]
+        }
+    }
 }
