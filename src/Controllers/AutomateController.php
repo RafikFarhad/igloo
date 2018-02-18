@@ -27,8 +27,7 @@ class AutomateController extends Controller
 
     public function make()
     {
-        $data = Input::all()['data'];
-//        return $data;
+        $data = Input::all();
         $rules = [
             'modelName' => 'required',
             'columns' => 'required'
@@ -40,44 +39,60 @@ class AutomateController extends Controller
                 'error' => $validation->errors()
             ]);
         }
+//        return $data;
         $modelName = trim($data['modelName']);
         $fillable = [];
         $columns = $data['columns'];
+//        return $columns;
         $schema = [];
+        $column_names = 'id';
         foreach ($columns as $column) {
-            if ($column['name'] == 'id')
-            {
+            if ($column['columnName'] == 'id') {
 //                array_push($schema, 'id');
-            }
-            else {
-                $column_schema = $column['name'].':'.strtolower($column['type']);
-                if($column['status']=='nullable')
-                {
-                    $column_schema.=':nullable';
+            } else {
+                $column_schema = $column['columnName'] . ':' . strtolower($column['dataType']);
+                $column_names .= ',' . $column['columnName'];
+                array_push($fillable, $column['columnName']);
+                if ($column['nullStatus'] == 'nullable') {
+                    $column_schema .= ':nullable';
+                }
+                if ($column['uniqueStatus'] == 'unique') {
+                    $column_schema .= ':unique';
+                }
+                if ($column['defaultValue'] != 'none') {
+                    $column_schema .= ":default('" . $column['defaultValue'] . "')";
                 }
                 array_push($schema, $column_schema);
-
             }
         }
         $fillable = implode(',', $fillable);
         $model_command = 'php artisan make-model ' . $modelName . ' --fillable=' . $fillable;
         $repo_command = 'php artisan make-repo ' . $modelName;
         $service_command = 'php artisan make-service ' . $modelName;
-        $schema_command = 'php artisan make:migration:schema create_'.
-            strtolower(str_plural($modelName)).'_table'.
-            ' --schema="'.implode(', ', $schema).'" --model=0';
-        ;
+        $schema_command = 'php artisan make:migration:schema create_' .
+            strtolower(str_plural($modelName)) . '_table' .
+            ' --schema="' . implode(', ', $schema) . '" --model=0';
+        $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
+        $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
+        $route_command = 'php artisan make-route ' . $modelName;
         try {
-            $save =  $this->saveToFile($modelName, [
+            $save = $this->saveToFile($modelName, [
                 'Model' => $model_command,
                 'Repository' => $repo_command,
                 'Service' => $service_command,
-                'Migration' => $schema_command
+                'Migration' => $schema_command,
+                'Transformer' => $transformer_command,
+                'Request' => $request_command,
+                'Route' => $route_command
             ]);
-            if($save) return 'done';
-        }
-        catch (\Exception $e)
-        {
+            if ($save) {
+                return '<h2> Successfully Created the sleleton. </h2>' .
+                    '<h3>To generate all class run the following command</h3> <br>' .
+                    '<code>php artisan igloo</code> <br><br>' .
+                    '<h3>To get API route for this ' . $modelName . ' run the following command</h3> <br>' .
+                    '<code>'.$route_command.'</code>';
+            }
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
         return 'unknown error';
@@ -87,8 +102,7 @@ class AutomateController extends Controller
     {
         try {
 
-            if(!File::exists(public_path('igloo.json')))
-            {
+            if (!File::exists(public_path('igloo.json'))) {
                 File::put(public_path('igloo.json'), '{}');
             }
             $data = File::get(public_path('igloo.json'));
@@ -98,9 +112,7 @@ class AutomateController extends Controller
 
             $status = File::put(public_path('igloo.json'), json_encode($data, JSON_PRETTY_PRINT));
             return true;
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             throw $e;
             throw new \Exception('File Stream Problem.');
         }
