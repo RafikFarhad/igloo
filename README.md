@@ -8,24 +8,41 @@
 
 ## Installation
 
-1) In order to install Igloo Code Generator, just add the following to your composer.json. Then run `composer update`:
+1) In order to install Igloo Code Generator, just add run the following command::
 
 ```json
-"farhad/igloo": "*"
+composer require farhad/igloo
 ```
 *If your laravel version is >=5.5 you don't need to apply step (2).*
 
 2) Open your `config/app.php` and add the following to the `providers` array:
 
 ```shell
-Farhad\Igloo\IglooServiceProvider::class,
+Farhad\Igloo\IglooServiceProvider::class
 ```
 
-3) Run the command below to publish the package file. Select the index of `Farhad\Igloo`: 
+3) Run the command below to publish the package file: 
 
 ```shell
-php artisan vendor:publish
+php artisan vendor:publish --provider="Farhad\Igloo\IglooServiceProvider"
+php artisan vendor:publish --provider="Barryvdh\Cors\ServiceProvider"
+
 ```
+
+4) For allowing CORS on a API middleware group or route, add the `HandleCors` middleware to your group in the ```Kernel.php``` file:
+   
+   ```php
+   protected $middlewareGroups = [
+       'web' => [
+          // ...
+       ],
+   
+       'api' => [
+           // ...
+           \Barryvdh\Cors\HandleCors::class,
+       ],
+   ];
+   ```
 
 ## Usage
 

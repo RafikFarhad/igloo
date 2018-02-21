@@ -1,6 +1,6 @@
 {
     "name": "farhad/igloo",
-    "description": "An automated process for create basic CRUD functionalities",
+    "description": "An automated process for create basic CRUD functionality",
     "type": "laralvel-helper",
     "license": "MIT",
     "authors": [
@@ -10,7 +10,10 @@
         }
     ],
     "require": {
-        "laracasts/generators": "^1.1"
+        "laracasts/generators": "^1.1",
+        "spatie/laravel-fractal": "^5.3",
+        "ellipsesynergie/api-response": "^0.15.0",
+        "barryvdh/laravel-cors": "^0.11.0"
     },
     "autoload": {
         "classmap": [
