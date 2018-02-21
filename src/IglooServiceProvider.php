@@ -49,7 +49,6 @@ class IglooServiceProvider extends ServiceProvider
         $this->requestCommandCreator();
         $this->routeCommandCreator();
         $this->app->make('Farhad\Igloo\Controllers\AutomateController');
-        $this->app->register('Barryvdh\Cors\ServiceProvider');
     }
 
 
