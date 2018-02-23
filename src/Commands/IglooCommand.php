@@ -22,7 +22,7 @@ class IglooCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Make Model, Repo, Service, Migration';
+    protected $description = 'Make Model, Repo, Service, Migration, Request, Request, Transformer, Route & Controller';
 
 
 

@@ -9,4 +9,14 @@ class DummyModel extends Model
     protected $guarded = [/*GUARDED*/];
     protected $fillable = [/*FILLABLE*/];
     //
+
+    /**
+     * Get the relationships for the entity.
+     *
+     * @return array
+     */
+    public function getQueueableRelations()
+    {
+        // TODO: Implement getQueueableRelations() method.
+    }
 }

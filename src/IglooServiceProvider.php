@@ -2,6 +2,7 @@
 
 namespace Farhad\Igloo;
 
+use Farhad\Igloo\Commands\ControllerCommand;
 use Farhad\Igloo\Commands\RequestCommand;
 use Farhad\Igloo\Commands\RouteCommand;
 use Farhad\Igloo\Commands\TransformerCommand;
@@ -48,6 +49,7 @@ class IglooServiceProvider extends ServiceProvider
         $this->iglooCommandCreator();
         $this->requestCommandCreator();
         $this->routeCommandCreator();
+        $this->controllerCommandCreator();
         $this->app->make('Farhad\Igloo\Controllers\AutomateController');
     }
 
@@ -101,6 +103,13 @@ class IglooServiceProvider extends ServiceProvider
         $this->commands('make.route');
     }
 
+    public function controllerCommandCreator()
+    {
+        $this->app->singleton('make.controller', function ($app) {
+            return new ControllerCommand($app['files']);
+        });
+        $this->commands('make.controller');
+    }
 
     public function iglooCommandCreator()
     {

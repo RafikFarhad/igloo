@@ -30,4 +30,14 @@ class DummyRequest extends FormRequest
         return [/*DummyColumnValues*/
         ];
     }
+
+    /**
+     * Validate the given class instance.
+     *
+     * @return void
+     */
+    public function validateResolved()
+    {
+        // TODO: Implement validateResolved() method.
+    }
 }

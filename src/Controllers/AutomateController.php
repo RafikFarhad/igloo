@@ -75,6 +75,7 @@ class AutomateController extends Controller
         $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
         $route_command = 'php artisan make-route ' . $modelName;
+        $controller_command = 'php artisan make-controller ' . $modelName . ' ' . $column_names;
         try {
             $save = $this->saveToFile($modelName, [
                 'Model' => $model_command,
@@ -83,6 +84,7 @@ class AutomateController extends Controller
                 'Migration' => $schema_command,
                 'Transformer' => $transformer_command,
                 'Request' => $request_command,
+                'Controller' => $controller_command,
                 'Route' => $route_command
             ]);
             if ($save) {
