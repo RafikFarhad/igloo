@@ -85,7 +85,8 @@ class AutomateController extends Controller
                 'Transformer' => $transformer_command,
                 'Request' => $request_command,
                 'Controller' => $controller_command,
-                'Route' => $route_command
+                'Route' => $route_command,
+                'status' => false
             ]);
             if ($save) {
                 return '<h2> Successfully Created the sleleton. </h2>' .

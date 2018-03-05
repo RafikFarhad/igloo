@@ -43,13 +43,50 @@ class IglooCommand extends Command
                 foreach ($models as $model => $commands)
                 {
                     $short_message = [];
-                    foreach ($commands as $key => $cmd)
+                    if($commands['status'] == true)
                     {
-                        $status = exec($cmd);
-                        $short_message[$key] = $status;
+                        $short_message['Status'] = 'Modules Already Exist';
+                    }
+                    else
+                    {
+                        foreach ($commands as $key => $cmd)
+                        {
+                            if($key=='status')
+                            {
+                                $cmd = true;
+                                continue;
+                            }
+                            try
+                            {
+                                $status = exec($cmd);
+                            }
+                            catch (\Exception $e)
+                            {
+                                $status = $e.getMessage();
+                            }
+                            $short_message[$key] = $status;
+                        }
                     }
                     $message[$model] = $short_message;
                 }
+                /// Change status false to true /////////////////////////////////////////////////////////////
+                foreach ($models as $model => $commands)
+                {
+                    $models[$model]['status'] = true;
+                }
+                File::put(public_path('igloo.json'), json_encode($models, JSON_PRETTY_PRINT));
+                /////////////////////////////////////////////////////////////////////////////////////////////
+                /// php artisan migrate /////////////////////////////////////////////////////////////////////
+                try
+                {
+                    $status = exec('php artisan migrate');
+                }
+                catch (\Exception $e)
+                {
+                    $status = $e.getMessage();
+                }
+                $message['migrate'] = $status;
+                /////////////////////////////////////////////////////////////////////////////////////////////
                 $this->info(json_encode($message, JSON_PRETTY_PRINT));
             }
             else
