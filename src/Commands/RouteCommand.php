@@ -50,6 +50,7 @@ class RouteCommand extends Command
         );
 
         $this->info($stub);
+        return $stub;
     }
 
 

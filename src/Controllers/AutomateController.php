@@ -74,7 +74,8 @@ class AutomateController extends Controller
             ' --schema="' . implode(', ', $schema) . '" --model=0';
         $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
-        $route_command = 'php artisan make-route ' . $modelName;
+        $route_command = 'php ../artisan make-route ' . $modelName;
+        $route_list = $this->findRouteList($route_command);
         $controller_command = 'php artisan make-controller ' . $modelName . ' ' . $column_names;
         try {
             $save = $this->saveToFile($modelName, [
@@ -89,16 +90,35 @@ class AutomateController extends Controller
                 'status' => false
             ]);
             if ($save) {
-                return '<h2> Successfully Created the sleleton. </h2>' .
+                return '<h2> Successfully Created the skeleton. </h2>' .
                     '<h3>To generate all class run the following command</h3> <br>' .
                     '<code>php artisan igloo</code> <br><br>' .
-                    '<h3>To get API route for this ' . $modelName . ' run the following command</h3> <br>' .
-                    '<code>'.$route_command.'</code>';
+                    '<h3>API Routes for ' . $modelName . ' crud</h3> <br>' .
+                    '<code>'.$route_list.'</code>'.
+                    '<h3>To generate it later, simply type this command</h3> <br>' .
+                    '<code>'.$route_command.'</code>'
+                    ;
             }
         } catch (\Exception $e) {
             return $e->getMessage();
         }
-        return 'unknown error';
+        return '<h2> There is something went wrong. </h2>';
+    }
+
+    public function findRouteList($cmd)
+    {
+        $route_list = [];
+        try
+        {
+            exec($cmd, $route_list);
+        }
+        catch (\Exception $e)
+        {
+            return $e->getMessage();
+        }
+        $route_list = implode('<br>&nbsp;&nbsp;&nbsp;&nbsp;', $route_list);
+        return $route_list;
+
     }
 
     public function saveToFile($modelName, array $commands)
@@ -121,43 +141,4 @@ class AutomateController extends Controller
         }
     }
 
-
-//    public function model()
-//    {
-//        $data = Input::all();
-//
-//        $rules = [
-//            'model' => 'required',
-//        ];
-//        $validation = Validator::make($data, $rules);
-//        if ($validation->fails())
-//        {
-//            return json_encode([
-//                'status' => 400,
-//                'error'  => $validation->errors()
-//            ]);
-//        }
-//        $name = strtoupper($data['model'][0]).substr($data['model'], 1);
-//        $fillable = isset($data['fillable'])?$data['fillable']:'';
-//        $guarded = isset($data['guarded'])?$data['guarded']:'';
-//        try
-//        {
-//            $status = Artisan::call('make-model', [
-//                'name'          => $name,
-//                '--fillable'   => $fillable,
-//                '--guarded'    => $guarded
-//            ]);
-//        }
-//        catch (\Exception $e)
-//        {
-//            return json_encode([
-//                "status" => 400,
-//                "data" => $e->getMessage()
-//            ]);
-//        }
-//        return json_encode([
-//            "status" => 200,
-//            "data" => $status
-//        ]);
-//    }
 }
