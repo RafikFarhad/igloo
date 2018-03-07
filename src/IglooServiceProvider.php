@@ -29,6 +29,7 @@ class IglooServiceProvider extends ServiceProvider
             __DIR__ . '/../publish/Res/' => app_path('Responses'),
             __DIR__ . '/../publish/Tran/' => app_path('Transformers'),
             __DIR__ . '/../publish/Req/' => app_path('Http/Requests'),
+            __DIR__ . '/../publish/config/' => app_path('../config'),
         ], 'Farhad-Igloo');
 //        include __DIR__.'/routes/web.php';
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
