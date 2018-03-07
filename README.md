@@ -16,27 +16,21 @@
 composer require farhad/igloo
 ```
 
-2) Run the command below to publish the package file: 
+2) Run the command below to load all configuration file: 
 
 ```shell
 php artisan vendor:publish --provider="Farhad\Igloo\IglooServiceProvider"
-php artisan vendor:publish --provider="Barryvdh\Cors\ServiceProvider"
-php artisan vendor:publish --provider="Spatie\Fractal\FractalServiceProvider"
 ```
 
-3) For allowing CORS on a API middleware group or route, add the `HandleCors` middleware to your group in the ```Kernel.php``` file:
+3) For allowing CORS on a API middleware group or route, add the `HandleCors` middleware to `middleware` array in the ```Kernel.php``` file:
    
    ```php
-   protected $middlewareGroups = [
-       'web' => [
-          // ...
-       ],
-   
-       'api' => [
-           // ...
+   protected $middleware = [
+           ... ... ... ... ...
+           ... ... ... ... ...
+        
            \Barryvdh\Cors\HandleCors::class,
-       ],
-   ];
+       ];
    ```
 
 ## Usage
@@ -138,18 +132,17 @@ php artisan make-route Book
 ```
 This command will output like this:
 ```
-/////////////////////////////// Book Routes //////////////////////////////////
-
-Route::get('book/', 'BookController@index')->name('Book.index');
-Route::get('book/add', 'BookController@add')->name('Book.add');
-Route::post('book/store', 'BookController@store')->name('Book.add.store');
-Route::get('book/edit/{id}', 'BookController@edit')->name('Book.edit');
-Route::post('book/store/{id}', 'BookController@edit_store')->name('Book.edit.store');
-Route::post('book/delete/{id}', 'BookController@delete')->name('Book.delete');
+///////////////////////////// Book Routes //////////////////////////////
+Route::group(['prefix' => 'book', 'namespace' => 'Api'], function () {
+    Route::get('index', 'BookController@index')->name('book.index');
+    Route::post('create', 'BookController@store')->name('book.store');
+    Route::post('update', 'BookController@update')->name('book.update');
+    Route::delete('delete', 'BookController@delete')->name('book.delete');
+});
 
 ```
 This command will not save anything. You've to copy this segment from console and paste it in your `web.php` or `api.php` file.
-The assumption for the controller name will be **Modelname**Controller.
+The assumption for the controller name will be [**Modelname**]Controller.
 
 
 

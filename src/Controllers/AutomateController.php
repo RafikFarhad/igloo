@@ -116,7 +116,13 @@ class AutomateController extends Controller
         {
             return $e->getMessage();
         }
-        $route_list = implode('<br>&nbsp;&nbsp;&nbsp;&nbsp;', $route_list);
+        $list = [];
+        foreach ($route_list as $sentence)
+        {
+            if(trim($sentence)!='')
+                array_push($list, $sentence);
+        }
+        $route_list = implode('<br>&nbsp;&nbsp;&nbsp;&nbsp;', $list);
         return $route_list;
 
     }

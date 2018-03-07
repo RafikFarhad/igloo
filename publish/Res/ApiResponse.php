@@ -1,78 +1,152 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rat
- * Date: 2/9/18
- * Time: 10:06 AM
- */
 
 namespace App\Responses;
 
-use EllipseSynergie\ApiResponse\AbstractResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Support\Facades\Input;
+use League\Fractal\Manager;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Validation\Validator;
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
+use League\Fractal\Serializer\ArraySerializer;
 
-class ApiResponse extends AbstractResponse
+/**
+ * Class ApiResponse
+ *
+ * @package App\Responses
+ */
+class ApiResponse implements ApiResponseInterface
 {
+
+    const HTTP_CODE_200_OK              = 200;
+    const HTTP_CODE_201_CREATED         = 201;
+    const HTTP_CODE_400_BAD_REQUEST     = 400;
+    const HTTP_CODE_401_UNAUTHORIZED    = 401;
+    const APP_CODE_200_OK               = 200;
+    const APP_CODE_400_INVALID_REQUEST  = 400;
+
     /**
-     * @param array $array
-     * @param array $headers
-     * @param int $json_options
-     * @return \Illuminate\Http\JsonResponse
+     * @var Manager
      */
-    public function withArray(array $array, array $headers = [], $json_options = 0)
+    protected $manager;
+
+    /**
+     * @param ArraySerializer $serializer
+     */
+    public function __construct(ArraySerializer $serializer)
     {
-        return response()->json($array, $this->statusCode, $headers, $json_options);
+        $this->manager = new Manager();
+        $this->manager->setSerializer($serializer);
+        $this->parseIncludes(Input::get('include'));
     }
 
     /**
-     * @param $message
+     * Respond success with simple response
+     *
+     * @param $data
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function message($message)
+    public function success($data)
     {
-        return $this->withArray(['message' => $message]);
+        return response()->json(new SimpleResponse(true, '', $data, self::APP_CODE_200_OK));
     }
 
     /**
-     * @param $message
-     * @param $statusCode
-     * @param array $headers
+     * Respond error with simple response
+     *
+     * @param string $message
+     * @param string $result
+     * @param int $errorCode
+     * @param int $applicationCode
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function error(
+        $message = '',
+        $result = '',
+        $errorCode = self::HTTP_CODE_400_BAD_REQUEST,
+        $applicationCode = self::APP_CODE_400_INVALID_REQUEST
+    ) {
+        return response()->json(
+            new SimpleResponse(false, $message, $result, $applicationCode),
+            $errorCode
+        );
+    }
+
+    /**
+     * @param $includes
+     * @internal param $connection
      * @return mixed
      */
-    public function withErrorAndStatus($message, $statusCode, array $headers = [])
+    public function parseIncludes($includes)
     {
-        return $this->setStatusCode($statusCode)->withError($message, "", $headers);
-    }
-
-    public function withPaginator(LengthAwarePaginator $paginator, $transformer, $resourceKey = null, $meta = [])
-    {
-        $queryParams = array_diff_key($_GET, array_flip(['page']));
-        $paginator->appends($queryParams);
-
-        $resource = new Collection($paginator->items(), $transformer, $resourceKey);
-        $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-
-        foreach ($meta as $metaKey => $metaValue) {
-            $resource->setMetaValue($metaKey, $metaValue);
+        if (is_null($includes)) {
+            return false;
         }
 
-        $rootScope = $this->manager->createData($resource);
-
-        return $this->withArray($rootScope->toArray());
+        $this->manager->parseIncludes($includes);
     }
 
     /**
-     * Generates a Response with a 400 HTTP header and a given message from validator
-     *
-     * @param Validator $validator
-     * @return ResponseFactory
+     * @param mixed $data
+     * @param \League\Fractal\TransformerAbstract|callable $transformer
+     * @param string $resourceKey
+     * @return array
      */
-    public function errorWrongArgsValidator(Validator $validator)
+    public function item($data, $transformer = null, $resourceKey = null)
     {
-        return $this->errorWrongArgs($validator->getMessageBag()->toArray());
+        $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
+
+        $result = $this->manager->createData($resource)->toArray();
+
+        return response()->json(new SimpleResponse(true, '', $result, self::HTTP_CODE_200_OK));
+    }
+
+    /**
+     * @param $data
+     * @param \League\Fractal\TransformerAbstract|callable $transformer
+     * @param string $resourceKey
+     * @return array
+     */
+    public function collection($data, $transformer = null, $resourceKey = null)
+    {
+        $resource = new Collection($data, $this->getTransformer($transformer), $resourceKey);
+
+        $result = $this->manager->createData($resource)->toArray();
+
+        return response()->json(new SimpleResponse(true, '', $result['data'], self::APP_CODE_200_OK));
+    }
+
+    /**
+     * @param LengthAwarePaginator $paginator
+     * @param \League\Fractal\TransformerAbstract|callable $transformer
+     * @param string $resourceKey
+     * @return mixed
+     */
+    public function paginatedCollection(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
+    {
+        $paginator->appends(\Request::query());
+        $resource = new Collection($paginator->getCollection(), $this->getTransformer($transformer), $resourceKey);
+        $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
+
+        $result = $this->manager->createData($resource)->toArray();
+
+        return response()->json(new SimpleResponse(true, '', $result, self::APP_CODE_200_OK));
+    }
+
+    /**
+     * @param TransformerAbstract $transformer
+     * @return TransformerAbstract|callback
+     */
+    protected function getTransformer($transformer = null)
+    {
+        return $transformer ?: function ($data) {
+            if ($data instanceof ArrayableInterface) {
+                return $data->toArray();
+            }
+            return (array)$data;
+        };
     }
 }

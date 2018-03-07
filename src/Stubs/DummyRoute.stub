@@ -5,6 +5,3 @@ Route::group(['prefix' => 'dummy', 'namespace' => 'Api'], function () {
     Route::post('update', 'DUMMYController@update')->name('dummy.update');
     Route::delete('delete', 'DUMMYController@delete')->name('dummy.delete');
 });
-
-
-
