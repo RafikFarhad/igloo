@@ -94,9 +94,7 @@ class AutomateController extends Controller
                     '<h3>To generate all class run the following command</h3> <br>' .
                     '<code>php artisan igloo</code> <br><br>' .
                     '<h3>API Routes for ' . $modelName . ' crud</h3> <br>' .
-                    '<code>'.$route_list.'</code>'.
-                    '<h3>To generate it later, simply type this command</h3> <br>' .
-                    '<code>'.$route_command.'</code>'
+                    '<code>'.$route_list.'</code>'
                     ;
             }
         } catch (\Exception $e) {
