@@ -19,12 +19,6 @@ class AutomateController extends Controller
         ]);
     }
 
-    public function index()
-    {
-        return view('dist/index');
-    }
-
-
     public function make()
     {
         $data = Input::all();
@@ -39,28 +33,35 @@ class AutomateController extends Controller
                 'error' => $validation->errors()
             ]);
         }
-//        return $data;
         $modelName = trim($data['modelName']);
         $fillable = [];
         $columns = $data['columns'];
-//        return $columns;
         $schema = [];
         $column_names = 'id';
         foreach ($columns as $column) {
             if ($column['columnName'] == 'id') {
-//                array_push($schema, 'id');
             } else {
                 $column_schema = $column['columnName'] . ':' . strtolower($column['dataType']);
                 $column_names .= ',' . $column['columnName'];
                 array_push($fillable, $column['columnName']);
-                if ($column['nullStatus'] == 'nullable') {
+                if ($column['nullStatus'] == 'nullable')
+                {
                     $column_schema .= ':nullable';
                 }
-                if ($column['uniqueStatus'] == 'unique') {
+                if ($column['uniqueStatus'] == 'unique')
+                {
                     $column_schema .= ':unique';
                 }
-                if ($column['defaultValue'] != 'none') {
-                    $column_schema .= ":default('" . $column['defaultValue'] . "')";
+                if ($column['defaultValue'] != 'none')
+                {
+                    if($column['dataType']=='boolean')
+                    {
+                        $column_schema .= ":default(" . $column['defaultValue'] . ")";
+                    }
+                    else
+                    {
+                        $column_schema .= ":default('" . $column['defaultValue'] . "')";
+                    }
                 }
                 array_push($schema, $column_schema);
             }
@@ -76,6 +77,7 @@ class AutomateController extends Controller
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
         $route_command = 'php ../artisan make-route ' . $modelName;
         $route_list = $this->findRouteList($route_command);
+        $route_command = 'php artisan make-route ' . $modelName;
         $controller_command = 'php artisan make-controller ' . $modelName . ' ' . $column_names;
         try {
             $save = $this->saveToFile($modelName, [
@@ -128,15 +130,12 @@ class AutomateController extends Controller
     public function saveToFile($modelName, array $commands)
     {
         try {
-
             if (!File::exists(public_path('igloo.json'))) {
                 File::put(public_path('igloo.json'), '{}');
             }
             $data = File::get(public_path('igloo.json'));
             $data = json_decode($data, true);
-
             $data[$modelName] = $commands;
-
             $status = File::put(public_path('igloo.json'), json_encode($data, JSON_PRETTY_PRINT));
             return true;
         } catch (\Exception $e) {

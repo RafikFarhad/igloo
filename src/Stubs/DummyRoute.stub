@@ -1,7 +1,7 @@
 ///////////////////////////// DUMMY Routes //////////////////////////////
 Route::group(['prefix' => 'dummy', 'namespace' => 'Api'], function () {
     Route::get('index', 'DUMMYController@index')->name('dummy.index');
-    Route::post('create', 'DUMMYController@store')->name('dummy.store');
+    Route::post('create', 'DUMMYController@create')->name('dummy.create');
     Route::post('update', 'DUMMYController@update')->name('dummy.update');
     Route::delete('delete', 'DUMMYController@delete')->name('dummy.delete');
 });

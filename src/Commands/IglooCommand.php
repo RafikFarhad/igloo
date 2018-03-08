@@ -51,7 +51,7 @@ class IglooCommand extends Command
                     {
                         foreach ($commands as $key => $cmd)
                         {
-                            if($key=='status')
+                            if($key=='status' || $key=='Route')
                             {
                                 $cmd = true;
                                 continue;

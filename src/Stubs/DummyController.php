@@ -32,25 +32,25 @@ class DummyController extends Controller
         {
             $dummy_plural = $this->dummyService->getFilterWithPaginatedData([]);
 //            return fractal()->collection($dummy_plural, new DummyTransformer());
-            return $this->apiResponse->paginatedCollection($dummy_plural, new DummyTransformer());
+            return $this->apiResponse->withPaginator($dummy_plural, new DummyTransformer());
         }
         catch (\Exception $e)
         {
-            return $this->apiResponse->error('Something Went Wrong.');
+            return $this->apiResponse->withError('Something Went Wrong.', 422);
         }
     }
 
-    public function store(DummyRequest $request)
+    public function create(DummyRequest $request)
     {
         try
         {
             $data = $request->only([/*FILLABLE*/]);
             $dummy = $this->dummyService->create($data);
-            return $this->apiResponse->item($dummy, new DummyTransformer());
+            return $this->apiResponse->withItem($dummy, new DummyTransformer());
         }
         catch (\Exception $e)
         {
-            return $this->apiResponse->error('Something Went Wrong.');
+            return $this->apiResponse->withError('Something Went Wrong.', 422);
         }
     }
 
@@ -63,13 +63,13 @@ class DummyController extends Controller
             $dummy = $this->dummyService->update($data, $id);
             if($dummy)
             {
-                return $this->apiResponse->success('Updated');
+                return $this->apiResponse->withItem($dummy, new DummyTransformer());
             }
             throw new \Exception();
         }
         catch (\Exception $e)
         {
-            return $this->apiResponse->error('Something Went Wrong.');
+            return $this->apiResponse->withError('Something Went Wrong.', 422);
         }
     }
 
@@ -81,13 +81,13 @@ class DummyController extends Controller
             $dummy = $this->dummyService->delete($id);
             if($dummy)
             {
-                return $this->apiResponse->success('Deleted');
+                return $this->apiResponse->message('Deleted');
             }
             throw new \Exception();
         }
         catch (\Exception $e)
         {
-            return $this->apiResponse->error('Something Went Wrong.');
+            return $this->apiResponse->withError('Something Went Wrong.', 422);
         }
     }
 }

@@ -2,151 +2,71 @@
 
 namespace App\Responses;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Contracts\ArrayableInterface;
-use Illuminate\Support\Facades\Input;
-use League\Fractal\Manager;
+use EllipseSynergie\ApiResponse\AbstractResponse;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Validation\Validator;
 use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\Item;
-use League\Fractal\Serializer\ArraySerializer;
 
-/**
- * Class ApiResponse
- *
- * @package App\Responses
- */
-class ApiResponse implements ApiResponseInterface
+class ApiResponse extends AbstractResponse
 {
-
-    const HTTP_CODE_200_OK              = 200;
-    const HTTP_CODE_201_CREATED         = 201;
-    const HTTP_CODE_400_BAD_REQUEST     = 400;
-    const HTTP_CODE_401_UNAUTHORIZED    = 401;
-    const APP_CODE_200_OK               = 200;
-    const APP_CODE_400_INVALID_REQUEST  = 400;
-
     /**
-     * @var Manager
-     */
-    protected $manager;
-
-    /**
-     * @param ArraySerializer $serializer
-     */
-    public function __construct(ArraySerializer $serializer)
-    {
-        $this->manager = new Manager();
-        $this->manager->setSerializer($serializer);
-        $this->parseIncludes(Input::get('include'));
-    }
-
-    /**
-     * Respond success with simple response
-     *
-     * @param $data
-     *
+     * @param array $array
+     * @param array $headers
+     * @param int $json_options
      * @return \Illuminate\Http\JsonResponse
      */
-    public function success($data)
+    public function withArray(array $array, array $headers = [], $json_options = 0)
     {
-        return response()->json(new SimpleResponse(true, '', $data, self::APP_CODE_200_OK));
+        return response()->json($array, $this->statusCode, $headers, $json_options);
     }
 
     /**
-     * Respond error with simple response
-     *
-     * @param string $message
-     * @param string $result
-     * @param int $errorCode
-     * @param int $applicationCode
-     *
+     * @param $message
      * @return \Illuminate\Http\JsonResponse
      */
-    public function error(
-        $message = '',
-        $result = '',
-        $errorCode = self::HTTP_CODE_400_BAD_REQUEST,
-        $applicationCode = self::APP_CODE_400_INVALID_REQUEST
-    ) {
-        return response()->json(
-            new SimpleResponse(false, $message, $result, $applicationCode),
-            $errorCode
-        );
+    public function message($message)
+    {
+        return $this->withArray(['message' => $message]);
     }
 
     /**
-     * @param $includes
-     * @internal param $connection
+     * @param $message
+     * @param $statusCode
+     * @param array $headers
      * @return mixed
      */
-    public function parseIncludes($includes)
+    public function withErrorAndStatus($message, $statusCode, array $headers = [])
     {
-        if (is_null($includes)) {
-            return false;
-        }
-
-        $this->manager->parseIncludes($includes);
+        return $this->setStatusCode($statusCode)->withError($message, "", $headers);
     }
 
-    /**
-     * @param mixed $data
-     * @param \League\Fractal\TransformerAbstract|callable $transformer
-     * @param string $resourceKey
-     * @return array
-     */
-    public function item($data, $transformer = null, $resourceKey = null)
+    public function withPaginator(LengthAwarePaginator $paginator, $transformer, $resourceKey = null, $meta = [])
     {
-        $resource = new Item($data, $this->getTransformer($transformer), $resourceKey);
+        $queryParams = array_diff_key($_GET, array_flip(['page']));
+        $paginator->appends($queryParams);
 
-        $result = $this->manager->createData($resource)->toArray();
-
-        return response()->json(new SimpleResponse(true, '', $result, self::HTTP_CODE_200_OK));
-    }
-
-    /**
-     * @param $data
-     * @param \League\Fractal\TransformerAbstract|callable $transformer
-     * @param string $resourceKey
-     * @return array
-     */
-    public function collection($data, $transformer = null, $resourceKey = null)
-    {
-        $resource = new Collection($data, $this->getTransformer($transformer), $resourceKey);
-
-        $result = $this->manager->createData($resource)->toArray();
-
-        return response()->json(new SimpleResponse(true, '', $result['data'], self::APP_CODE_200_OK));
-    }
-
-    /**
-     * @param LengthAwarePaginator $paginator
-     * @param \League\Fractal\TransformerAbstract|callable $transformer
-     * @param string $resourceKey
-     * @return mixed
-     */
-    public function paginatedCollection(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
-    {
-        $paginator->appends(\Request::query());
-        $resource = new Collection($paginator->getCollection(), $this->getTransformer($transformer), $resourceKey);
+        $resource = new Collection($paginator->items(), $transformer, $resourceKey);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
 
-        $result = $this->manager->createData($resource)->toArray();
+        foreach ($meta as $metaKey => $metaValue) {
+            $resource->setMetaValue($metaKey, $metaValue);
+        }
 
-        return response()->json(new SimpleResponse(true, '', $result, self::APP_CODE_200_OK));
+        $rootScope = $this->manager->createData($resource);
+
+        return $this->withArray($rootScope->toArray());
     }
 
     /**
-     * @param TransformerAbstract $transformer
-     * @return TransformerAbstract|callback
+     * Generates a Response with a 400 HTTP header and a given message from validator
+     *
+     * @param Validator $validator
+     * @return ResponseFactory
      */
-    protected function getTransformer($transformer = null)
+    public function errorWrongArgsValidator(Validator $validator)
     {
-        return $transformer ?: function ($data) {
-            if ($data instanceof ArrayableInterface) {
-                return $data->toArray();
-            }
-            return (array)$data;
-        };
+        return $this->errorWrongArgs($validator->getMessageBag()->toArray());
     }
 }

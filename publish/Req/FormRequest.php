@@ -30,10 +30,7 @@ abstract class FormRequest extends LaravelFormRequest
                     'message' => $message[0]
                 ];
             }
-            return response()->json(
-                new SimpleResponse(false, "Validation Error", $errors, 422),
-                422
-            );
+            return response()->json($errors->errorBag, 422);
         }
         return $this->redirector->to($this->getRedirectUrl())
             ->withInput($this->except($this->dontFlash))

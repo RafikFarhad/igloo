@@ -150,7 +150,7 @@ The assumption for the controller name will be [**Modelname**]Controller.
 
 1) For bundle create visit
 
-[Igloo Wizard - wizard.cse.party](https://wizard.cse.party "Igloo Wizard")
+[Igloo Wizard - http://wizard.cse.party](http://wizard.cse.party "Igloo Wizard")
 
 
 ## License
