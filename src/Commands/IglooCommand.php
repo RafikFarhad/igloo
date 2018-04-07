@@ -77,15 +77,15 @@ class IglooCommand extends Command
                 File::put(public_path('igloo.json'), json_encode($models, JSON_PRETTY_PRINT));
                 /////////////////////////////////////////////////////////////////////////////////////////////
                 /// php artisan migrate /////////////////////////////////////////////////////////////////////
-                try
-                {
-                    $status = exec('php artisan migrate');
-                }
-                catch (\Exception $e)
-                {
-                    $status = $e.getMessage();
-                }
-                $message['migrate'] = $status;
+                // try
+                // {
+                //     $status = exec('php artisan migrate');
+                // }
+                // catch (\Exception $e)
+                // {
+                //     $status = $e.getMessage();
+                // }
+                // $message['migrate'] = $status;
                 /////////////////////////////////////////////////////////////////////////////////////////////
                 $this->info(json_encode($message, JSON_PRETTY_PRINT));
             }
