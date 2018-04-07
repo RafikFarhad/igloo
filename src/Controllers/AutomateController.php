@@ -69,7 +69,7 @@ class AutomateController extends Controller
         $fillable = implode(',', $fillable);
         $model_command = 'php artisan make-model ' . $modelName . ' --fillable=' . $fillable;
         $repo_command = 'php artisan make-repo ' . $modelName;
-        $service_command = 'php artisan make-service ' . $modelName;
+        $service_command = 'php artisan make-service ' . $modelName. ' ' . $column_names;
         $schema_command = 'php artisan make:migration:schema create_' .
             strtolower(str_plural($modelName)) . '_table' .
             ' --schema="' . implode(', ', $schema) . '" --model=0';
@@ -78,7 +78,7 @@ class AutomateController extends Controller
         $route_command = 'php ../artisan make-route ' . $modelName;
         $route_list = $this->findRouteList($route_command);
         $route_command = 'php artisan make-route ' . $modelName;
-        $controller_command = 'php artisan make-controller ' . $modelName . ' ' . $column_names;
+        $controller_command = 'php artisan make-controller ' . $modelName;
         try {
             $save = $this->saveToFile($modelName, [
                 'Model' => $model_command,

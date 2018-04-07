@@ -16,15 +16,12 @@ class RouteCommand extends Command
      */
     protected $signature = 'make-route { name : Model Name }
                             ';
-
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Make API Routes for basic CRUD';
-
-
 
     /**
      * Execute the console command.
@@ -40,11 +37,13 @@ class RouteCommand extends Command
         $stub = str_replace(
             [
                 'DUMMY',
-                'dummy'
+                'dummy',
+                'dummys'
             ],
             [
                 $this->argument('name'),
-                strtolower($this->argument('name'))
+                strtolower($this->argument('name')),
+                str_plural(strtolower($this->argument('name')))
             ],
             $stub
         );

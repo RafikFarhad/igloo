@@ -80,7 +80,7 @@ abstract class Repository
      */
     public function create(array $data)
     {
-        return $this->model->create($data);
+        return $this->model->create($data)->fresh();
     }
 
     /**
@@ -94,7 +94,8 @@ abstract class Repository
     {
         $model = $this->find($id);
         $model->fill($data);
-        return $model->save();
+        $model->save();
+        return $model;
     }
 
     /**

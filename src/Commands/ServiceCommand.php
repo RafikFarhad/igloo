@@ -5,6 +5,7 @@ namespace Farhad\Igloo\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Farhad\Igloo\GeneratorClass;
+use Carbon\Carbon;
 
 class ServiceCommand extends GeneratorClass
 {
@@ -13,7 +14,9 @@ class ServiceCommand extends GeneratorClass
      *
      * @var string
      */
-    protected $signature = 'make-service { name : Model Name }';
+    protected $signature = 'make-service { name : Model Name }
+                                         {attributes : Model column names}'
+                                        ;
 
     /**
      * The console command description.
@@ -62,13 +65,38 @@ class ServiceCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
+        $name = trim($this->argument('name'));
+        $lower_name = strtolower($name[0]).substr($name, 1);
+        $plural_name = str_plural($lower_name);
         $stub = str_replace([
             'DummyNamespace',
+            '/*DummyColumnValues*/',
+            'DUMMYDATE',
+            'DummyRequest',
+            'dummyService',
+            'DummyService',
             'DummyRepository',
-            'dummyRepository'], [
+            'dummyRepository',
+            'DummyTransformer',
+            'dummy_plural',
+            'dummy',
+            'Dummy',
+            '/*FILLABLE*/'
+        ], [
             $this->rootNamespace(),
+            $this->getAttributeKey('attributes'),
+            Carbon::now()->toDateTimeString(),
+            $name.'Request',
+            $lower_name.'Service',
+            $name.'Service',
             $this->modelRepositoryClassName(),
-            $this->modelRepositoryVarName()],
+            $this->modelRepositoryVarName(),
+            $name.'Transformer',
+            $plural_name,
+            $lower_name,
+            $name,
+            $this->getAttributeKey('attributes'),
+        ],
             $stub
         );
         return $this;
@@ -106,6 +134,22 @@ class ServiceCommand extends GeneratorClass
         return rtrim($this->laravel->getNamespace() . $this->namespace, '\\');
     }
 
+    protected function getAttributeKey($attribute_key)
+    {
+        $fields = trim($this->argument($attribute_key));
+        $fields = explode(',', $fields);
+        $result = "";
+        foreach ($fields as $field)
+        {
+            if($field == 'id')
+                ;
+            else
+                $result .= "'".$field."',";
+        }
+        $result = rtrim($result, ',');
+        if($result=="''") return null;
+        return $result;
+    }
 
     /**
      * Replace the class name for the given stub.

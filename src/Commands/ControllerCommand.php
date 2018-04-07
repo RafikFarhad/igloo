@@ -15,7 +15,6 @@ class ControllerCommand extends GeneratorClass
      * @var string
      */
     protected $signature = 'make-controller { name : Model Name }
-                            {attributes : Model column names}
                             ';
 
     /**
@@ -69,7 +68,6 @@ class ControllerCommand extends GeneratorClass
         $stub = str_replace(
             [
                 'DummyNamespace',
-                '/*DummyColumnValues*/',
                 'DUMMYDATE',
                 'DummyRequest',
                 'dummyService',
@@ -78,11 +76,9 @@ class ControllerCommand extends GeneratorClass
                 'dummy_plural',
                 'dummy',
                 'Dummy',
-                '/*FILLABLE*/'
             ],
             [
                 $this->rootNamespace(),
-                $this->getAttributeKey('attributes'),
                 Carbon::now()->toDateTimeString(),
                 $name.'Request',
                 $lower_name.'Service',
@@ -90,8 +86,7 @@ class ControllerCommand extends GeneratorClass
                 $name.'Transformer',
                 $plural_name,
                 $lower_name,
-                $name,
-                $this->getAttributeKey('attributes')
+                $name
             ],
             $stub
         );
