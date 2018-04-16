@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Farhad\Igloo\GeneratorClass;
 
-class RequestCommand extends GeneratorClass
+class CreateRequestCommand extends GeneratorClass
 {
     /**
      * The name and signature of the console command.
@@ -51,6 +51,8 @@ class RequestCommand extends GeneratorClass
      */
     protected function qualifyClass($name)
     {
+        $this->namespace .= $this->argument('name');
+        $this->namespace .= '//';
         return $this->namespace.$name;
     }
 
@@ -70,7 +72,7 @@ class RequestCommand extends GeneratorClass
                 'DUMMYDATE'
             ],
             [
-                $this->rootNamespace(),
+                'App\Http\Requests\Api\\'.$this->argument('name'),
                 $this->getOptionalKey('attributes'),
                 Carbon::now()->toDateTimeString()
             ],
@@ -106,8 +108,8 @@ class RequestCommand extends GeneratorClass
      */
     protected function getNameInput()
     {
-        $this->model = trim($this->argument('name'));
-        return $this->model . 'Request';
+//        $this->model = trim($this->argument('name'));
+        return 'CreateRequest';
     }
 
     /**
@@ -132,7 +134,7 @@ class RequestCommand extends GeneratorClass
     {
         $class = str_replace($this->getNamespace($name).'\\', '', $name);
 
-        return str_replace('DummyRequest', $class, $stub);
+        return str_replace('DummyCreateRequest', 'CreateRequest', $stub);
     }
 
     /**
@@ -142,6 +144,6 @@ class RequestCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyRequest.php';
+        return __DIR__ . '/../Stubs/DummyCreateRequest.php';
     }
 }

@@ -22,6 +22,7 @@ class AutomateController extends Controller
     public function make()
     {
         $data = Input::all();
+//        return $data;
         $rules = [
             'modelName' => 'required',
             'columns' => 'required'
@@ -34,47 +35,63 @@ class AutomateController extends Controller
             ]);
         }
         $modelName = trim($data['modelName']);
+        $table_name = null;
+        if(isset($data['tableName']))
+        {
+            $table_name = trim($data['tableName']);
+        }
+        if (!$table_name) {
+            $table_name = strtolower(str_plural($modelName));
+        }
         $fillable = [];
         $columns = $data['columns'];
         $schema = [];
         $column_names = 'id';
         foreach ($columns as $column) {
             if ($column['columnName'] == 'id') {
-            } else {
-                $column_schema = $column['columnName'] . ':' . strtolower($column['dataType']);
-                $column_names .= ',' . $column['columnName'];
-                array_push($fillable, $column['columnName']);
-                if ($column['nullStatus'] == 'nullable')
+                //ID Implemented automatically
+            }
+            else {
+                $columnName = trim($column['columnName']);
+                $dataType = trim($column['dataType']);
+                $foreignTable = trim($column['foreignTable']);
+                $nullStatus = trim($column['nullStatus']);
+                $uniqueStatus = trim($column['uniqueStatus']);
+                $defaultValue = trim($column['defaultValue']);
+
+                $column_schema = $columnName . ':' . strtolower($dataType);
+                $column_names .= ',' . $columnName;
+                array_push($fillable, $columnName);
+                if($foreignTable != null)
                 {
+                    $column_schema .= ':unsigned:foreign';
+                }
+                if ($nullStatus == 'nullable') {
                     $column_schema .= ':nullable';
                 }
-                if ($column['uniqueStatus'] == 'unique')
-                {
+                if ($uniqueStatus == 'unique') {
                     $column_schema .= ':unique';
                 }
-                if ($column['defaultValue'] != 'none')
-                {
-                    if($column['dataType']=='boolean')
-                    {
-                        $column_schema .= ":default(" . $column['defaultValue'] . ")";
-                    }
-                    else
-                    {
-                        $column_schema .= ":default('" . $column['defaultValue'] . "')";
+                if ($defaultValue != 'none') {
+                    if ($dataType == 'boolean' or $defaultValue == 'null') {
+                        $column_schema .= ":default(" . $defaultValue . ")";
+                    } else {
+                        $column_schema .= ":default('" . $defaultValue . "')";
                     }
                 }
                 array_push($schema, $column_schema);
             }
         }
         $fillable = implode(',', $fillable);
-        $model_command = 'php artisan make-model ' . $modelName . ' --fillable=' . $fillable;
+        $model_command = 'php artisan make-model ' . $modelName . ' --guarded=id --table_name=' . $table_name;
         $repo_command = 'php artisan make-repo ' . $modelName;
-        $service_command = 'php artisan make-service ' . $modelName. ' ' . $column_names;
+        $service_command = 'php artisan make-service ' . $modelName . ' ' . $column_names;
         $schema_command = 'php artisan make:migration:schema create_' .
-            strtolower(str_plural($modelName)) . '_table' .
-            ' --schema="' . implode(', ', $schema) . '" --model=0';
+            $table_name . '_table' .
+            ' --schema="' . implode(', ', $schema) . ',deleted_at:timestamp:nullable" --model=0';
         $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
+        $request_command_update = 'php artisan make-request-update ' . $modelName . ' ' . $column_names;
         $route_command = 'php ../artisan make-route ' . $modelName;
         $route_list = $this->findRouteList($route_command);
         $route_command = 'php artisan make-route ' . $modelName;
@@ -87,6 +104,7 @@ class AutomateController extends Controller
                 'Migration' => $schema_command,
                 'Transformer' => $transformer_command,
                 'Request' => $request_command,
+                'Request Update' => $request_command_update,
                 'Controller' => $controller_command,
                 'Route' => $route_command,
                 'status' => false
@@ -95,9 +113,8 @@ class AutomateController extends Controller
                 return '<h2> Successfully Created the skeleton. </h2>' .
                     '<h3>To generate all class run the following command</h3> <br>' .
                     '<code>php artisan igloo</code> <br><br>' .
-                    '<h3>API Routes for ' . $modelName . ' crud</h3> <br>' .
-                    '<code>'.$route_list.'</code>'
-                    ;
+                    '<h3>API Routes for ' . $modelName . ' CRUD</h3> <br>' .
+                    '<code>' . $route_list . '</code>';
             }
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -108,23 +125,18 @@ class AutomateController extends Controller
     public function findRouteList($cmd)
     {
         $route_list = [];
-        try
-        {
+        try {
             exec($cmd, $route_list);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
         $list = [];
-        foreach ($route_list as $sentence)
-        {
-            if(trim($sentence)!='')
+        foreach ($route_list as $sentence) {
+            if (trim($sentence) != '')
                 array_push($list, $sentence);
         }
         $route_list = implode('<br>&nbsp;&nbsp;&nbsp;&nbsp;', $list);
         return $route_list;
-
     }
 
     public function saveToFile($modelName, array $commands)

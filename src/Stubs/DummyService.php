@@ -7,7 +7,6 @@ namespace DummyNamespace;
  * Date: DUMMYDATE
  */
 
-use App\Http\Requests\Api\DummyRequest;
 use App\Repositories\DummyRepository;
 use App\Responses\ApiResponse;
 use App\Transformers\Api\DummyTransformer;
@@ -59,10 +58,10 @@ class DummyService extends BaseService
     }
 
     /**
-     * @param DummyRequest $request
+     * @param DummyCreateRequest $request
      * @return mixed
      */
-    public function createDummy(DummyRequest $request)
+    public function createDummy($request)
     {
         try {
             $data = $request->only(
@@ -93,10 +92,10 @@ class DummyService extends BaseService
 
     /**
      * @param $id
-     * @param DummyRequest $request
+     * @param DummyCreateRequest $request
      * @return mixed
      */
-    public function updateDummy($id, DummyRequest $request)
+    public function updateDummy($id, $request)
     {
         try {
             $data = $request->only(

@@ -8,7 +8,7 @@ namespace DummyNamespace;
 
 use App\Http\Requests\FormRequest;
 
-class DummyRequest extends FormRequest
+class DummyCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,15 +29,5 @@ class DummyRequest extends FormRequest
     {
         return [/*DummyColumnValues*/
         ];
-    }
-
-    /**
-     * Validate the given class instance.
-     *
-     * @return void
-     */
-    public function validateResolved()
-    {
-        // TODO: Implement validateResolved() method.
     }
 }

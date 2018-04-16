@@ -72,7 +72,7 @@ class ServiceCommand extends GeneratorClass
             'DummyNamespace',
             '/*DummyColumnValues*/',
             'DUMMYDATE',
-            'DummyRequest',
+            'DummyCreateRequest',
             'dummyService',
             'DummyService',
             'DummyRepository',

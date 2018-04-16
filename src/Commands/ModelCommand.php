@@ -2,6 +2,7 @@
 
 namespace Farhad\Igloo\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Farhad\Igloo\GeneratorClass;
@@ -16,6 +17,7 @@ class ModelCommand extends GeneratorClass
     protected $signature = 'make-model { name : Model Name }
                             {--fillable= : The name of fillable attributes}
                             {--guarded= : The name of guarded attributes}
+                            {--table_name= : The name of associated table}
                             ';
 
     /**
@@ -46,26 +48,40 @@ class ModelCommand extends GeneratorClass
     /**
      * Parse the class name and format according to the root namespace.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return string
      */
     protected function qualifyClass($name)
     {
-        return $this->namespace.$name;
+        return $this->namespace . $name;
     }
 
     /**
      * Replace the namespace for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param  string $stub
+     * @param  string $name
      * @return $this
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $stub = str_replace(
-            ['DummyNamespace', '/*GUARDED*/', '/*FILLABLE*/'],
-            [$this->rootNamespace(), $this->getOptionalKey('guarded'), $this->getOptionalKey('fillable')],
+        $table_name = $this->option('table_name');
+        if ($table_name == null) {
+            $table_name = strtolower(str_plural($this->argument('name')));
+        }
+
+        $stub = str_replace([
+            'DummyNamespace',
+            'DUMMYDATE',
+            '/*GUARDED*/',
+            '/*FILLABLE*/',
+            '/*TABLE NAME*/'], [
+            $this->rootNamespace(),
+            Carbon::now()->toDateTimeString(),
+            $this->getOptionalKey('guarded'),
+            $this->getOptionalKey('fillable'),
+            $table_name
+        ],
             $stub
         );
         return $this;
@@ -77,12 +93,11 @@ class ModelCommand extends GeneratorClass
         $fields = $this->option($optional_key);
         $fields = explode(',', $fields);
         $result = "";
-        foreach ($fields as $field)
-        {
-            $result .= "'".$field."',";
+        foreach ($fields as $field) {
+            $result .= "'" . $field . "',";
         }
         $result = rtrim($result, ',');
-        if($result=="''") return null;
+        if ($result == "''") return null;
         return $result;
     }
 
@@ -94,20 +109,20 @@ class ModelCommand extends GeneratorClass
      */
     protected function rootNamespace()
     {
-        return rtrim($this->laravel->getNamespace().$this->namespace, '\\');
+        return rtrim($this->laravel->getNamespace() . $this->namespace, '\\');
     }
 
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param  string $stub
+     * @param  string $name
      * @return string
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
+        $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
         return str_replace('DummyModel', $class, $stub);
     }

@@ -8,7 +8,8 @@
 namespace DummyNamespace;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\DummyRequest;
+use App\Http\Requests\Api\Dummy\CreateRequest as DummyRequest;
+use App\Http\Requests\Api\Dummy\UpdateRequest as DummyUpdateRequest;
 use App\Services\DummyService;
 
 class DummyController extends Controller
@@ -29,7 +30,7 @@ class DummyController extends Controller
     }
 
     /**
-     * @param DummyRequest $request
+     * @param DummyCreateRequest $request
      * @return mixed
      */
     public function create(DummyRequest $request)
@@ -50,10 +51,10 @@ class DummyController extends Controller
 
     /**
      * @param $id
-     * @param DummyRequest $request
+     * @param DummyCreateRequest $request
      * @return mixed
      */
-    public function update($id, DummyRequest $request)
+    public function update($id, DummyUpdateRequest $request)
     {
         return $this->dummyService->updateDummy($id, $request);
     }

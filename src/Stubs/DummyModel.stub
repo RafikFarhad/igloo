@@ -1,12 +1,23 @@
 <?php
 
+/**
+ * Created by Igloo Generator.
+ * Date: DUMMYDATE
+ */
+
 namespace DummyNamespace;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DummyModel extends Model
 {
+    use SoftDeletes;
+
+    protected $table = '/*TABLE NAME*/';
+
     protected $guarded = [/*GUARDED*/];
+
     protected $fillable = [/*FILLABLE*/];
 
 }

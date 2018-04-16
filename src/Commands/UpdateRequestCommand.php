@@ -7,14 +7,15 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Farhad\Igloo\GeneratorClass;
 
-class ControllerCommand extends GeneratorClass
+class UpdateRequestCommand extends GeneratorClass
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make-controller { name : Model Name }
+    protected $signature = 'make-request-update { name : Model Name }
+                            {attributes : Model column names}
                             ';
 
     /**
@@ -22,14 +23,14 @@ class ControllerCommand extends GeneratorClass
      *
      * @var string
      */
-    protected $description = 'Create new controller.';
+    protected $description = 'Create new Form Request with attributes.';
 
 
-    protected $namespace = 'Http\Controllers\Api\\';
+    protected $namespace = 'Http\Requests\Api\\';
 
     protected $files;
 
-    protected $type = 'Controller';
+    protected $type = 'Update Request';
 
     /**
      * Create a new command instance.
@@ -50,6 +51,8 @@ class ControllerCommand extends GeneratorClass
      */
     protected function qualifyClass($name)
     {
+        $this->namespace .= $this->argument('name');
+        $this->namespace .= '//';
         return $this->namespace.$name;
     }
 
@@ -62,31 +65,16 @@ class ControllerCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $name = trim($this->argument('name'));
-        $lower_name = strtolower($name[0]).substr($name, 1);
-        $plural_name = str_plural($lower_name);
         $stub = str_replace(
             [
                 'DummyNamespace',
-                'DUMMYDATE',
-                'DummyCreateRequest',
-                'dummyService',
-                'DummyService',
-                'DummyTransformer',
-                'dummy_plural',
-                'dummy',
-                'Dummy',
+                '/*DummyColumnValues*/',
+                'DUMMYDATE'
             ],
             [
-                $this->rootNamespace(),
-                Carbon::now()->toDateTimeString(),
-                $name.'Request',
-                $lower_name.'Service',
-                $name.'Service',
-                $name.'Transformer',
-                $plural_name,
-                $lower_name,
-                $name
+                'App\Http\Requests\Api\\'.$this->argument('name'),
+                $this->getOptionalKey('attributes'),
+                Carbon::now()->toDateTimeString()
             ],
             $stub
         );
@@ -94,9 +82,9 @@ class ControllerCommand extends GeneratorClass
     }
 
 
-    protected function getAttributeKey($attribute_key)
+    protected function getOptionalKey($optional_key)
     {
-        $fields = trim($this->argument($attribute_key));
+        $fields = $this->argument($optional_key);
         $fields = explode(',', $fields);
         $result = "";
         foreach ($fields as $field)
@@ -104,7 +92,7 @@ class ControllerCommand extends GeneratorClass
             if($field == 'id')
                 ;
             else
-                $result .= "'".$field."',";
+                $result .= "\n            ".str_pad("'".$field."'", 25)."=> "."'required',";
         }
         $result = rtrim($result, ',');
         if($result=="''") return null;
@@ -120,8 +108,8 @@ class ControllerCommand extends GeneratorClass
      */
     protected function getNameInput()
     {
-        $this->model = trim($this->argument('name'));
-        return $this->model . 'Controller';
+//        $this->model = trim($this->argument('name'));
+        return 'UpdateRequest';
     }
 
     /**
@@ -146,7 +134,7 @@ class ControllerCommand extends GeneratorClass
     {
         $class = str_replace($this->getNamespace($name).'\\', '', $name);
 
-        return str_replace('DummyController', $class, $stub);
+        return str_replace('DummyUpdateRequest', 'UpdateRequest', $stub);
     }
 
     /**
@@ -156,6 +144,6 @@ class ControllerCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyController.php';
+        return __DIR__ . '/../Stubs/DummyUpdateRequest.php';
     }
 }

@@ -3,10 +3,10 @@
 namespace Farhad\Igloo;
 
 use Farhad\Igloo\Commands\ControllerCommand;
-use Farhad\Igloo\Commands\RequestCommand;
+use Farhad\Igloo\Commands\CreateRequestCommand;
 use Farhad\Igloo\Commands\RouteCommand;
 use Farhad\Igloo\Commands\TransformerCommand;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Farhad\Igloo\Commands\UpdateRequestCommand;
 use Illuminate\Support\ServiceProvider;
 use Farhad\Igloo\Commands\IglooCommand;
 use Farhad\Igloo\Commands\ModelCommand;
@@ -48,7 +48,8 @@ class IglooServiceProvider extends ServiceProvider
         $this->serviceCommandCreator();
         $this->transformerCommandCreator();
         $this->iglooCommandCreator();
-        $this->requestCommandCreator();
+        $this->createRequestCommandCreator();
+        $this->updateRequestCommandCreator();
         $this->routeCommandCreator();
         $this->controllerCommandCreator();
         $this->app->make('Farhad\Igloo\Controllers\AutomateController');
@@ -88,18 +89,27 @@ class IglooServiceProvider extends ServiceProvider
         $this->commands('make.transformer');
     }
 
-    public function requestCommandCreator()
+    public function createRequestCommandCreator()
     {
         $this->app->singleton('make.request', function ($app) {
-            return new RequestCommand($app['files']);
+            return new CreateRequestCommand($app['files']);
         });
         $this->commands('make.request');
     }
 
+    public function updateRequestCommandCreator()
+    {
+        $this->app->singleton('make.request.update', function ($app) {
+            return new UpdateRequestCommand($app['files']);
+        });
+        $this->commands('make.request.update');
+    }
+
+
     public function routeCommandCreator()
     {
         $this->app->singleton('make.route', function ($app) {
-            return new RouteCommand($app['files']);
+            return new RouteCommand();
         });
         $this->commands('make.route');
     }
