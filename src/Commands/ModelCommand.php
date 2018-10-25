@@ -18,6 +18,7 @@ class ModelCommand extends GeneratorClass
                             {--fillable= : The name of fillable attributes}
                             {--guarded= : The name of guarded attributes}
                             {--table_name= : The name of associated table}
+                            {--namespace= : The namespace to store the Model}
                             ';
 
     /**
@@ -25,10 +26,10 @@ class ModelCommand extends GeneratorClass
      *
      * @var string
      */
-    protected $description = 'Create new model with fillable and guarded.';
+    protected $description = 'Create new model with fillable, guarded, table name and namespace.';
 
 
-    protected $namespace = 'Models\\';
+    protected $namespace = 'Models/';
 
     protected $files;
 
@@ -67,7 +68,7 @@ class ModelCommand extends GeneratorClass
     {
         $table_name = $this->option('table_name');
         if ($table_name == null) {
-            $table_name = strtolower(str_plural($this->argument('name')));
+            $table_name = strtolower($this->getOnlyClassName($name));
         }
 
         $stub = str_replace([
@@ -76,7 +77,7 @@ class ModelCommand extends GeneratorClass
             '/*GUARDED*/',
             '/*FILLABLE*/',
             '/*TABLE NAME*/'], [
-            $this->rootNamespace(),
+            $this->getNamespace($name),
             Carbon::now()->toDateTimeString(),
             $this->getOptionalKey('guarded'),
             $this->getOptionalKey('fillable'),
@@ -88,30 +89,28 @@ class ModelCommand extends GeneratorClass
     }
 
 
-    protected function getOptionalKey($optional_key)
-    {
-        $fields = $this->option($optional_key);
-        $fields = explode(',', $fields);
-        $result = "";
-        foreach ($fields as $field) {
-            $result .= "'" . $field . "',";
-        }
-        $result = rtrim($result, ',');
-        if ($result == "''") return null;
-        return $result;
-    }
-
-
     /**
-     * Get the root namespace for the class.
+     * Get the full namespace for a given class, without the class name.
      *
+     * @param  string  $name
      * @return string
      */
-    protected function rootNamespace()
+    protected function getNamespace($name)
     {
-        return rtrim($this->laravel->getNamespace() . $this->namespace, '\\');
+        return trim(implode('\\', array_slice(explode('/', $name), 0, -1)), '/');
     }
 
+    /**
+     * Returns the pure class name for creation
+     *
+     * @param  string $name
+     * @return string
+     */
+    protected function getOnlyClassName($name)
+    {
+        $class = array_slice(explode('/', $name), -1, 1)[0];
+        return $class;
+    }
 
     /**
      * Replace the class name for the given stub.
@@ -122,8 +121,7 @@ class ModelCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name) . '\\', '', $name);
-
+        $class = $this->getOnlyClassName($name);
         return str_replace('DummyModel', $class, $stub);
     }
 

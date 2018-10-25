@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Created by Igloo Generator.
+ * Created with Igloo Generator.
  * Date: DUMMYDATE
  */
 
@@ -18,6 +18,8 @@ class DummyModel extends Model
 
     protected $guarded = [/*GUARDED*/];
 
-    protected $fillable = [/*FILLABLE*/];
+    /**
+     * protected $fillable = [/*FILLABLE*/];
+     */
 
 }

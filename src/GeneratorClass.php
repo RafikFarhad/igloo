@@ -6,6 +6,7 @@ namespace Farhad\Igloo;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Input\InputArgument;
 
 abstract class GeneratorClass extends Command
 {
@@ -36,6 +37,23 @@ abstract class GeneratorClass extends Command
 //        $this->files = $files;
     }
 
+    protected function getOptionalKey($optional_key)
+    {
+        $fields = $this->option($optional_key);
+        $fields = explode(',', $fields);
+        if(sizeof($fields) == 1)
+        {
+            return $fields[0];
+        }
+        $result = "";
+        foreach ($fields as $field) {
+            $result .= "'" . $field . "',";
+        }
+        $result = rtrim($result, ',');
+        if ($result == "''") return null;
+        return $result;
+    }
+
     /**
      * Get the stub file for the generator.
      *
@@ -47,6 +65,7 @@ abstract class GeneratorClass extends Command
      * Execute the console command.
      *
      * @return bool|null
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function handle()
     {
@@ -149,8 +168,9 @@ abstract class GeneratorClass extends Command
     /**
      * Build the class with the given name.
      *
-     * @param  string  $name
+     * @param  string $name
      * @return string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function buildClass($name)
     {

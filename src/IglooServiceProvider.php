@@ -31,7 +31,6 @@ class IglooServiceProvider extends ServiceProvider
             __DIR__ . '/../publish/Req/' => app_path('Http/Requests'),
             __DIR__ . '/../publish/config/' => app_path('../config'),
         ], 'Farhad-Igloo');
-//        include __DIR__.'/routes/web.php';
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
     }
@@ -130,20 +129,4 @@ class IglooServiceProvider extends ServiceProvider
         $this->commands('igloo');
     }
 
-
-
-
-
-
-//    /**
-//     * Get the services provided by the provider.
-//     *
-//     * @return array
-//     */
-//    public function provides()
-//    {
-//        return [
-//            'name.farhad',
-//        ];
-//    }
 }
