@@ -1,8 +1,13 @@
 <?php
+/**
+ * Created with Igloo Generator.
+ * Date: DUMMYDATE
+ */
 
 namespace DummyNamespace;
 
 use App\Models\DummyModel;
+use App\Repositories\Repository;
 
 class DummyRepository extends Repository
 {

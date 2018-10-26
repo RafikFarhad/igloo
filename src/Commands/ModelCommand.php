@@ -88,30 +88,6 @@ class ModelCommand extends GeneratorClass
         return $this;
     }
 
-
-    /**
-     * Get the full namespace for a given class, without the class name.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function getNamespace($name)
-    {
-        return trim(implode('\\', array_slice(explode('/', $name), 0, -1)), '/');
-    }
-
-    /**
-     * Returns the pure class name for creation
-     *
-     * @param  string $name
-     * @return string
-     */
-    protected function getOnlyClassName($name)
-    {
-        $class = array_slice(explode('/', $name), -1, 1)[0];
-        return $class;
-    }
-
     /**
      * Replace the class name for the given stub.
      *

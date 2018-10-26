@@ -15,7 +15,7 @@ class ServiceCommand extends GeneratorClass
      * @var string
      */
     protected $signature = 'make-service { name : Model Name }
-                                         {attributes : Model column names}'
+                                         { attributes : Model column names}'
                                         ;
 
     /**
@@ -26,7 +26,7 @@ class ServiceCommand extends GeneratorClass
     protected $description = 'Create new service.';
 
 
-    protected $namespace = 'Services\\';
+    protected $namespace = 'Services/';
 
     protected $files;
 
@@ -65,8 +65,8 @@ class ServiceCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $name = trim($this->argument('name'));
-        $lower_name = strtolower($name[0]).substr($name, 1);
+        $onlyClassName = $this->getOnlyClassName($name);
+        $lower_name = strtolower($onlyClassName[0]).substr($onlyClassName, 1);
         $plural_name = str_plural($lower_name);
         $stub = str_replace([
             'DummyNamespace',
@@ -75,26 +75,30 @@ class ServiceCommand extends GeneratorClass
             'DummyCreateRequest',
             'dummyService',
             'DummyService',
+            'NamespacedDummyRepository',
             'DummyRepository',
             'dummyRepository',
+            'NamespacedDummyTransformer',
             'DummyTransformer',
             'dummy_plural',
             'dummy',
             'Dummy',
             '/*FILLABLE*/'
         ], [
-            $this->rootNamespace(),
+            $this->getNamespace($name),
             $this->getAttributeKey('attributes'),
             Carbon::now()->toDateTimeString(),
-            $name.'Request',
+            $onlyClassName.'Request',
             $lower_name.'Service',
-            $name.'Service',
-            $this->modelRepositoryClassName(),
-            $this->modelRepositoryVarName(),
-            $name.'Transformer',
+            $onlyClassName,
+            $this->modelWithDefaultNamespace($name).'Repository',
+            $onlyClassName . 'Repository',
+            $lower_name . 'Repository',
+            $this->modelWithDefaultNamespace().'Transformer',
+            $onlyClassName.'Transformer',
             $plural_name,
             $lower_name,
-            $name,
+            $onlyClassName,
             $this->getAttributeKey('attributes'),
         ],
             $stub
@@ -102,53 +106,10 @@ class ServiceCommand extends GeneratorClass
         return $this;
     }
 
-    protected function modelRepositoryClassName()
-    {
-        return $this->model . 'Repository';
-    }
 
-    protected function modelRepositoryVarName()
+    protected function modelWithDefaultNamespace()
     {
-        return strtolower($this->model[0]) . substr($this->model, 1) . 'Repository';
-    }
-
-
-    /**
-     * Get the desired class name from the input.
-     *
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $this->model = trim($this->argument('name'));
-        return $this->model . 'Service';
-    }
-
-    /**
-     * Get the root namespace for the class.
-     *
-     * @return string
-     */
-    protected function rootNamespace()
-    {
-        return rtrim($this->laravel->getNamespace() . $this->namespace, '\\');
-    }
-
-    protected function getAttributeKey($attribute_key)
-    {
-        $fields = trim($this->argument($attribute_key));
-        $fields = explode(',', $fields);
-        $result = "";
-        foreach ($fields as $field)
-        {
-            if($field == 'id')
-                ;
-            else
-                $result .= "'".$field."',";
-        }
-        $result = rtrim($result, ',');
-        if($result=="''") return null;
-        return $result;
+        return rtrim(str_replace('/', '\\', $this->getNameInput()), '\\');
     }
 
     /**
@@ -160,8 +121,7 @@ class ServiceCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name) . '\\', '', $name);
-
+        $class = $this->getOnlyClassName($name) . 'Service';
         return str_replace('DummyService', $class, $stub);
     }
 
@@ -172,6 +132,6 @@ class ServiceCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyService.php';
+        return __DIR__ . '/../Stubs/DummyService.stub';
     }
 }

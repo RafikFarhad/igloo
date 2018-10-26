@@ -3,13 +3,14 @@
 namespace DummyNamespace;
 
 /**
- * Created by Igloo Generator.
+ * Created with Igloo Generator.
  * Date: DUMMYDATE
  */
 
-use App\Repositories\DummyRepository;
+use App\Repositories\NamespacedDummyRepository;
 use App\Responses\ApiResponse;
-use App\Transformers\Api\DummyTransformer;
+use App\Transformers\NamespacedDummyTransformer;
+use App\Services\BaseService;
 use Exception;
 
 class DummyService extends BaseService
@@ -80,7 +81,7 @@ class DummyService extends BaseService
      * @param $id
      * @return mixed
      */
-    public function FindDummy($id)
+    public function findDummy($id)
     {
         try {
             $dummy = $this->dummyRepository->find($id);

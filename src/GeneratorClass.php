@@ -205,7 +205,7 @@ abstract class GeneratorClass extends Command
      */
     protected function getNamespace($name)
     {
-        return trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
+        return trim(implode('\\', array_slice(explode('/', $name), 0, -1)), '/');
     }
 
     /**
@@ -232,6 +232,27 @@ abstract class GeneratorClass extends Command
         return trim($this->argument('name'));
     }
 
+    protected function getAttributeKey($attribute_key)
+    {
+        $fields = trim($this->argument($attribute_key));
+        $fields = explode(',', $fields);
+        if(sizeof($fields)==1)
+        {
+            return $fields[0];
+        }
+        $result = "";
+        foreach ($fields as $field)
+        {
+            if($field == 'id')
+                ;
+            else
+                $result .= "'".$field."',";
+        }
+        $result = rtrim($result, ',');
+        if($result=="''") return null;
+        return $result;
+    }
+
     /**
      * Get the root namespace for the class.
      *
@@ -239,7 +260,19 @@ abstract class GeneratorClass extends Command
      */
     protected function rootNamespace()
     {
-        return $this->laravel->getNamespace();
+        return rtrim($this->laravel->getNamespace().$this->namespace, '\\');
+    }
+
+    /**
+     * Returns the pure class name for creation
+     *
+     * @param  string $name
+     * @return string
+     */
+    protected function getOnlyClassName($name)
+    {
+        $class = array_slice(explode('/', $name), -1, 1)[0];
+        return $class;
     }
 
     /**
