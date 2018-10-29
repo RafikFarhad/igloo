@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "illuminate/support": "5.5.x|5.6.x",
+        "illuminate/support": "^5.5",
         "laracasts/generators": "^1.1",
         "spatie/laravel-fractal": "^5.3",
         "ellipsesynergie/api-response": "^0.15.0",
