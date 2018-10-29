@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by Igloo Generator.
+ * Created with Igloo Generator.
  * Date: DUMMYDATE
  */
 
@@ -8,7 +8,7 @@ namespace DummyNamespace;
 
 use App\Http\Requests\FormRequest;
 
-class DummyCreateRequest extends FormRequest
+class DummyUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,8 @@ class DummyCreateRequest extends FormRequest
      */
     public function rules()
     {
-        return [/*DummyColumnValues*/
+        return [
+            'id'                     => 'required',/*DummyColumnValues*/
         ];
     }
 }

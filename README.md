@@ -3,14 +3,22 @@
 
 ## Contents
 
+- [Change Log](#changelog)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Super Usage](#super_usage)
 
 
+## Change Log
+### New in v1.1
+
+- Laravel 5.7 Support 
+- Namespace Supports
+- Several Bug Fixed 
+
 ## Installation
 
-1) In order to install Igloo Code Generator, just add run the following command::
+1) To install *Igloo Code Generator*, run the following command:
 
 ```shell
 composer require farhad/igloo
@@ -35,11 +43,10 @@ php artisan vendor:publish --provider="Farhad\Igloo\IglooServiceProvider"
 
 ## Usage
 
-
 ### Create Model
 Let's start by creating a basic Model:
 
-Model will be saved on `app\Model` folder.
+Model will be saved on `app\Models` folder.
 
 Run the following command on project root.
 

@@ -43,7 +43,7 @@ abstract class GeneratorClass extends Command
         $fields = explode(',', $fields);
         if(sizeof($fields) == 1)
         {
-            return $fields[0];
+            return "'".$fields[0]."'";
         }
         $result = "";
         foreach ($fields as $field) {
@@ -271,6 +271,10 @@ abstract class GeneratorClass extends Command
      */
     protected function getOnlyClassName($name)
     {
+        if(!$name)
+        {
+            $name = trim($this->argument('name'));
+        }
         $class = array_slice(explode('/', $name), -1, 1)[0];
         return $class;
     }

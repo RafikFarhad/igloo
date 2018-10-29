@@ -53,7 +53,7 @@ class ServiceCommand extends GeneratorClass
      */
     protected function qualifyClass($name)
     {
-        return $this->namespace . $name;
+        return $this->namespace . $name . 'Service';
     }
 
     /**
@@ -65,14 +65,16 @@ class ServiceCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $onlyClassName = $this->getOnlyClassName($name);
+        $onlyClassName = preg_replace('/Service$/', '', $this->getOnlyClassName($name));
         $lower_name = strtolower($onlyClassName[0]).substr($onlyClassName, 1);
         $plural_name = str_plural($lower_name);
         $stub = str_replace([
+            'NamespaceFor',
             'DummyNamespace',
             '/*DummyColumnValues*/',
             'DUMMYDATE',
             'DummyCreateRequest',
+            'DummyUpdateRequest',
             'dummyService',
             'DummyService',
             'NamespacedDummyRepository',
@@ -85,12 +87,14 @@ class ServiceCommand extends GeneratorClass
             'Dummy',
             '/*FILLABLE*/'
         ], [
-            $this->getNamespace($name),
+            str_replace('/', '\\', $this->argument('name')),
+            'App\\'.$this->getNamespace($name),
             $this->getAttributeKey('attributes'),
             Carbon::now()->toDateTimeString(),
-            $onlyClassName.'Request',
+            $onlyClassName.'CreateRequest',
+            $onlyClassName.'UpdateRequest',
             $lower_name.'Service',
-            $onlyClassName,
+            $onlyClassName.'Service',
             $this->modelWithDefaultNamespace($name).'Repository',
             $onlyClassName . 'Repository',
             $lower_name . 'Repository',

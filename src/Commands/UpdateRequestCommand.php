@@ -26,7 +26,7 @@ class UpdateRequestCommand extends GeneratorClass
     protected $description = 'Create new Form Request with attributes.';
 
 
-    protected $namespace = 'Http\Requests\Api\\';
+    protected $namespace = 'Http\Requests\\';
 
     protected $files;
 
@@ -72,7 +72,7 @@ class UpdateRequestCommand extends GeneratorClass
                 'DUMMYDATE'
             ],
             [
-                'App\Http\Requests\Api\\'.$this->argument('name'),
+                rtrim('App\\'.$this->getNamespace($name), '\\'),
                 $this->getOptionalKey('attributes'),
                 Carbon::now()->toDateTimeString()
             ],
@@ -108,8 +108,7 @@ class UpdateRequestCommand extends GeneratorClass
      */
     protected function getNameInput()
     {
-//        $this->model = trim($this->argument('name'));
-        return 'UpdateRequest';
+        return $this->getOnlyClassName(null).'UpdateRequest';
     }
 
     /**
@@ -132,9 +131,9 @@ class UpdateRequestCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
+        $class = $this->getOnlyClassName($name);
 
-        return str_replace('DummyUpdateRequest', 'UpdateRequest', $stub);
+        return str_replace('DummyUpdateRequest', $class, $stub);
     }
 
     /**
@@ -144,6 +143,6 @@ class UpdateRequestCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyUpdateRequest.php';
+        return __DIR__ . '/../Stubs/DummyUpdateRequest.stub';
     }
 }

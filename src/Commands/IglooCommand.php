@@ -91,7 +91,7 @@ class IglooCommand extends Command
             }
             else
             {
-                throw new \Exception('igloo.json not exist.');
+                throw new \Exception('igloo.json does not exist.');
             }
         }
         catch (\Exception $e)

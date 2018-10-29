@@ -51,7 +51,7 @@ class RepositoryCommand extends GeneratorClass
      */
     protected function qualifyClass($name)
     {
-        return $this->namespace . $name;
+        return $this->namespace . $name . 'Repository';
     }
 
     /**
@@ -70,9 +70,9 @@ class RepositoryCommand extends GeneratorClass
                 'DummyModel',
                 'DUMMYDATE'
             ], [
-                $this->getNamespace($name),
+            'App\\'.$this->getNamespace($name),
                 $this->modelWithClass($name),
-                $this->modelWithDefaultNamespace($name),
+                preg_replace('/Repository$/', '', $this->getOnlyClassName($name)),
                 Carbon::now()->toDateTimeString()
             ],
             $stub
@@ -82,7 +82,7 @@ class RepositoryCommand extends GeneratorClass
 
     protected function modelWithClass($name)
     {
-        return $this->getOnlyClassName($name) . '::class';
+        return preg_replace('/Repository$/', '', $this->getOnlyClassName($name)) . '::class';
     }
 
     protected function modelWithDefaultNamespace($name)
@@ -100,7 +100,7 @@ class RepositoryCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = $this->getOnlyClassName($name) . 'Repository';
+        $class = $this->getOnlyClassName($name);
 
         return str_replace('DummyRepository', $class, $stub);
     }

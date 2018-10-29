@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Created by Igloo Generator.
+ * Created with Igloo Generator.
  * Date: DUMMYDATE
  */
 
 namespace DummyNamespace;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Dummy\CreateRequest as DummyRequest;
-use App\Http\Requests\Api\Dummy\UpdateRequest as DummyUpdateRequest;
-use App\Services\DummyService;
+use App\Http\Requests\NamespaceFor\DummyCreateRequest;
+use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
+use App\Services\DummyServiceWithNamespace;
 
 class DummyController extends Controller
 {
@@ -33,7 +33,7 @@ class DummyController extends Controller
      * @param DummyCreateRequest $request
      * @return mixed
      */
-    public function create(DummyRequest $request)
+    public function create(DummyCreateRequest $request)
     {
         return $this->dummyService->createDummy($request);
     }
@@ -51,7 +51,7 @@ class DummyController extends Controller
 
     /**
      * @param $id
-     * @param DummyCreateRequest $request
+     * @param DummyUpdateRequest $request
      * @return mixed
      */
     public function update($id, DummyUpdateRequest $request)

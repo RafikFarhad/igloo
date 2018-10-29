@@ -143,7 +143,7 @@ class AutomateController extends Controller
     {
         try {
             if (!File::exists(public_path('igloo.json'))) {
-                File::put(public_path('igloo.json'), '{}');
+                File::put(public_path('igloo.json'), '{}', 777);
             }
             $data = File::get(public_path('igloo.json'));
             $data = json_decode($data, true);
@@ -151,8 +151,7 @@ class AutomateController extends Controller
             $status = File::put(public_path('igloo.json'), json_encode($data, JSON_PRETTY_PRINT));
             return true;
         } catch (\Exception $e) {
-            throw $e;
-            throw new \Exception('File Stream Problem.');
+            throw new \Exception('Something wen wrong regarding File Stream');
         }
     }
 

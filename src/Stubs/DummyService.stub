@@ -10,6 +10,8 @@ namespace DummyNamespace;
 use App\Repositories\NamespacedDummyRepository;
 use App\Responses\ApiResponse;
 use App\Transformers\NamespacedDummyTransformer;
+use App\Http\Requests\NamespaceFor\DummyCreateRequest;
+use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
 use App\Services\BaseService;
 use Exception;
 
@@ -93,7 +95,7 @@ class DummyService extends BaseService
 
     /**
      * @param $id
-     * @param DummyCreateRequest $request
+     * @param DummyUpdateRequest $request
      * @return mixed
      */
     public function updateDummy($id, $request)

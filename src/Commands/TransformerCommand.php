@@ -26,7 +26,7 @@ class TransformerCommand extends GeneratorClass
     protected $description = 'Create new transformers with attributes.';
 
 
-    protected $namespace = 'Transformers\Api\\';
+    protected $namespace = 'Transformers\\';
 
     protected $files;
 
@@ -70,7 +70,7 @@ class TransformerCommand extends GeneratorClass
                 'DUMMYDATE'
             ],
             [
-                $this->rootNamespace(),
+                'App\\'.$this->getNamespace($name),
                 $this->getOptionalKey('attributes'),
                 Carbon::now()->toDateTimeString()
             ],
@@ -130,7 +130,7 @@ class TransformerCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
+        $class = $this->getOnlyClassName($name);
 
         return str_replace('DummyTransformer', $class, $stub);
     }
@@ -142,6 +142,6 @@ class TransformerCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyTransformer.php';
+        return __DIR__ . '/../Stubs/DummyTransformer.stub';
     }
 }

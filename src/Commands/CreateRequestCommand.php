@@ -26,7 +26,7 @@ class CreateRequestCommand extends GeneratorClass
     protected $description = 'Create new Form Request with attributes.';
 
 
-    protected $namespace = 'Http\Requests\Api\\';
+    protected $namespace = 'Http\Requests\\';
 
     protected $files;
 
@@ -52,7 +52,7 @@ class CreateRequestCommand extends GeneratorClass
     protected function qualifyClass($name)
     {
         $this->namespace .= $this->argument('name');
-        $this->namespace .= '//';
+        $this->namespace .= '/';
         return $this->namespace.$name;
     }
 
@@ -72,7 +72,7 @@ class CreateRequestCommand extends GeneratorClass
                 'DUMMYDATE'
             ],
             [
-                'App\Http\Requests\Api\\'.$this->argument('name'),
+                'App\\'.$this->getNamespace($name),
                 $this->getOptionalKey('attributes'),
                 Carbon::now()->toDateTimeString()
             ],
@@ -108,8 +108,7 @@ class CreateRequestCommand extends GeneratorClass
      */
     protected function getNameInput()
     {
-//        $this->model = trim($this->argument('name'));
-        return 'CreateRequest';
+        return $this->getOnlyClassName(null).'CreateRequest';
     }
 
     /**
@@ -132,9 +131,9 @@ class CreateRequestCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
+        $class = $this->getOnlyClassName($name);
 
-        return str_replace('DummyCreateRequest', 'CreateRequest', $stub);
+        return str_replace('DummyCreateRequest', $class, $stub);
     }
 
     /**
@@ -144,6 +143,6 @@ class CreateRequestCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyCreateRequest.php';
+        return __DIR__ . '/../Stubs/DummyCreateRequest.stub';
     }
 }

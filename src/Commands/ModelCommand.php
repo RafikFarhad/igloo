@@ -54,7 +54,7 @@ class ModelCommand extends GeneratorClass
      */
     protected function qualifyClass($name)
     {
-        return $this->namespace . $name;
+        return $this->namespace . $this->getOnlyClassName($name);
     }
 
     /**
@@ -68,16 +68,14 @@ class ModelCommand extends GeneratorClass
     {
         $table_name = $this->option('table_name');
         if ($table_name == null) {
-            $table_name = strtolower($this->getOnlyClassName($name));
+            $table_name = str_plural(strtolower($this->getOnlyClassName($name)));
         }
 
         $stub = str_replace([
-            'DummyNamespace',
             'DUMMYDATE',
             '/*GUARDED*/',
             '/*FILLABLE*/',
             '/*TABLE NAME*/'], [
-            $this->getNamespace($name),
             Carbon::now()->toDateTimeString(),
             $this->getOptionalKey('guarded'),
             $this->getOptionalKey('fillable'),

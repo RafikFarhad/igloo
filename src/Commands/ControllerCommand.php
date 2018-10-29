@@ -25,7 +25,7 @@ class ControllerCommand extends GeneratorClass
     protected $description = 'Create new controller.';
 
 
-    protected $namespace = 'Http\Controllers\Api\\';
+    protected $namespace = 'Http\Controllers\\';
 
     protected $files;
 
@@ -62,14 +62,17 @@ class ControllerCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $name = trim($this->argument('name'));
+        $namespace = 'App\\'.$this->getNamespace($name);
+        $full_name = rtrim(str_replace('/', '\\', $this->argument('name')), '\\');
+        $name = preg_replace('/Controller$/', '', $this->getOnlyClassName($name));
         $lower_name = strtolower($name[0]).substr($name, 1);
         $plural_name = str_plural($lower_name);
         $stub = str_replace(
             [
                 'DummyNamespace',
                 'DUMMYDATE',
-                'DummyCreateRequest',
+                'NamespaceFor',
+                'DummyServiceWithNamespace',
                 'dummyService',
                 'DummyService',
                 'DummyTransformer',
@@ -78,15 +81,16 @@ class ControllerCommand extends GeneratorClass
                 'Dummy',
             ],
             [
-                $this->rootNamespace(),
+                $namespace,
                 Carbon::now()->toDateTimeString(),
-                $name.'Request',
+                $full_name,
+                $full_name.'Service',
                 $lower_name.'Service',
-                $name.'Service',
+                $this->getOnlyClassName($name).'Service',
                 $name.'Transformer',
                 $plural_name,
                 $lower_name,
-                $name
+                $name,
             ],
             $stub
         );
@@ -125,17 +129,6 @@ class ControllerCommand extends GeneratorClass
     }
 
     /**
-     * Get the root namespace for the class.
-     *
-     * @return string
-     */
-    protected function rootNamespace()
-    {
-        return rtrim($this->laravel->getNamespace().$this->namespace, '\\');
-    }
-
-
-    /**
      * Replace the class name for the given stub.
      *
      * @param  string  $stub
@@ -144,7 +137,7 @@ class ControllerCommand extends GeneratorClass
      */
     protected function replaceClass($stub, $name)
     {
-        $class = str_replace($this->getNamespace($name).'\\', '', $name);
+        $class = $this->getOnlyClassName($name);
 
         return str_replace('DummyController', $class, $stub);
     }
@@ -156,6 +149,6 @@ class ControllerCommand extends GeneratorClass
      */
     protected function getStub()
     {
-        return __DIR__ . '/../Stubs/DummyController.php';
+        return __DIR__ . '/../Stubs/DummyController.stub';
     }
 }
