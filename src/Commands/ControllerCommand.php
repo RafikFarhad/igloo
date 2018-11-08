@@ -70,6 +70,7 @@ class ControllerCommand extends GeneratorClass
         $stub = str_replace(
             [
                 'DummyNamespace',
+                'NamespacedDummyTransformer',
                 'DummyController',
                 'DUMMYDATE',
                 'NamespaceFor',
@@ -78,13 +79,13 @@ class ControllerCommand extends GeneratorClass
                 'DummyService',
                 'DummyTransformer',
                 'dummy_plural',
-                'NamespacedDummyTransformer',
                 'DummyTransformer',
                 'dummy',
                 'Dummy',
             ],
             [
                 $namespace,
+                $full_name.'Transformer',
                 $name,
                 Carbon::now()->toDateTimeString(),
                 $full_name,
@@ -94,7 +95,6 @@ class ControllerCommand extends GeneratorClass
                 $name.'Transformer',
                 $plural_name,
                 $full_name.'Transformer',
-                $this->getOnlyClassName($name).'Transformer',
                 $lower_name,
                 $name,
             ],
