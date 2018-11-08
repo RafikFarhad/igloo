@@ -43,6 +43,11 @@ class AutomateController extends Controller
         if (!$table_name) {
             $table_name = strtolower(str_plural($modelName));
         }
+        $softDelete = false;
+        if(isset($data['softDelete']))
+        {
+            $softDelete = true;
+        }
         $fillable = [];
         $columns = $data['columns'];
         $schema = [];
@@ -88,7 +93,7 @@ class AutomateController extends Controller
         $service_command = 'php artisan make-service ' . $modelName . ' ' . $column_names;
         $schema_command = 'php artisan make:migration:schema create_' .
             $table_name . '_table' .
-            ' --schema="' . implode(', ', $schema) . ',deleted_at:timestamp:nullable" --model=0';
+            ' --schema="' . implode(', ', $schema) . ($softDelete?',deleted_at:timestamp:nullable':'').'" --model=0';
         $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
         $request_command_update = 'php artisan make-request-update ' . $modelName . ' ' . $column_names;

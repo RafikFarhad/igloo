@@ -1,7 +1,7 @@
 {
     "name": "farhad/igloo",
     "description": "An automated process for create basic CRUD functionality",
-    "type": "laralvel-helper",
+    "type": "laravel-helper",
     "license": "MIT",
     "authors": [
         {

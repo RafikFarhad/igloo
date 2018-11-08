@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DummyModel extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = '/*TABLE NAME*/';
 

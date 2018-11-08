@@ -7,17 +7,30 @@
 
 namespace DummyNamespace;
 
+use App\Responses\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NamespaceFor\DummyCreateRequest;
 use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
 use App\Services\DummyServiceWithNamespace;
+use Exception;
+use App\Transformers\NamespacedDummyTransformer;
 
 class DummyController extends Controller
 {
+
+    /**
+     * @var ApiResponse
+     */
+    private $apiResponse;
+
+    /**
+     * @var DummyService
+     */
     private $dummyService;
 
-    public function __construct(DummyService $dummyService)
+    public function __construct(ApiResponse $apiResponse, DummyService $dummyService)
     {
+        $this->apiResponse = $apiResponse;
         $this->dummyService = $dummyService;
     }
 
@@ -26,7 +39,12 @@ class DummyController extends Controller
      */
     public function index()
     {
-        return $this->dummyService->allDummys();
+        try {
+                $dummys = $this->dummyService->allDummys();
+                return $this->apiResponse->withPaginator($dummys, new DummyTransformer());
+            } catch (Exception $e) {
+                return $this->apiResponse->withError('Something Went Wrong.', 422);
+            }
     }
 
     /**
@@ -35,7 +53,12 @@ class DummyController extends Controller
      */
     public function create(DummyCreateRequest $request)
     {
-        return $this->dummyService->createDummy($request);
+       try {
+            $dummy = $this->dummyService->createDummy($request);
+            return $this->apiResponse->withItem($dummy, new DummyTransformer());
+        } catch (Exception $e) {
+            return $this->apiResponse->withError('Something Went Wrong.', 422);
+        }
     }
 
 
@@ -45,7 +68,12 @@ class DummyController extends Controller
      */
     public function show($id)
     {
-        return $this->dummyService->findDummy($id);
+        try {
+            $dummy = $this->dummyService->findDummy($id);
+            return $this->apiResponse->withItem($dummy, new DummyTransformer());
+        } catch (Exception $exception) {
+            return $this->apiResponse->errorNotFound('Dummy Not Found');
+        }
     }
 
 
@@ -56,7 +84,12 @@ class DummyController extends Controller
      */
     public function update($id, DummyUpdateRequest $request)
     {
-        return $this->dummyService->updateDummy($id, $request);
+        try {
+            $dummy = $this->dummyService->update($id, $request);
+            return $this->apiResponse->withItem($dummy, new DummyTransformer());
+        } catch (Exception $e) {
+            return $this->apiResponse->errorNotFound('Dummy not found');
+        }
     }
 
     /**
@@ -65,6 +98,14 @@ class DummyController extends Controller
      */
     public function delete($id)
     {
-        return $this->dummyService->deleteDummy($id);
+        try {
+            $dummy = $this->dummyService->deleteDummy($id);
+            if ($dummy) {
+                return $this->apiResponse->message('Dummy deleted Successfully');
+            }
+            return $this->apiResponse->errorNotFound('Dummy Not Found');
+        } catch (Exception $e) {
+            return $this->apiResponse->errorNotFound('Dummy Not Found');
+        }
     }
 }

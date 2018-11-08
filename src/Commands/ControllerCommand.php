@@ -25,7 +25,7 @@ class ControllerCommand extends GeneratorClass
     protected $description = 'Create new controller.';
 
 
-    protected $namespace = 'Http\Controllers\\';
+    protected $namespace = 'Http/Controllers/';
 
     protected $files;
 
@@ -62,7 +62,7 @@ class ControllerCommand extends GeneratorClass
      */
     protected function replaceNamespace(&$stub, $name)
     {
-        $namespace = 'App\\'.$this->getNamespace($name);
+        $namespace = str_replace('/', '\\', 'App/'.$this->getNamespace($name));
         $full_name = rtrim(str_replace('/', '\\', $this->argument('name')), '\\');
         $name = preg_replace('/Controller$/', '', $this->getOnlyClassName($name));
         $lower_name = strtolower($name[0]).substr($name, 1);
@@ -70,6 +70,7 @@ class ControllerCommand extends GeneratorClass
         $stub = str_replace(
             [
                 'DummyNamespace',
+                'DummyController',
                 'DUMMYDATE',
                 'NamespaceFor',
                 'DummyServiceWithNamespace',
@@ -77,11 +78,14 @@ class ControllerCommand extends GeneratorClass
                 'DummyService',
                 'DummyTransformer',
                 'dummy_plural',
+                'NamespacedDummyTransformer',
+                'DummyTransformer',
                 'dummy',
                 'Dummy',
             ],
             [
                 $namespace,
+                $name,
                 Carbon::now()->toDateTimeString(),
                 $full_name,
                 $full_name.'Service',
@@ -89,6 +93,8 @@ class ControllerCommand extends GeneratorClass
                 $this->getOnlyClassName($name).'Service',
                 $name.'Transformer',
                 $plural_name,
+                $full_name.'Transformer',
+                $this->getOnlyClassName($name).'Transformer',
                 $lower_name,
                 $name,
             ],

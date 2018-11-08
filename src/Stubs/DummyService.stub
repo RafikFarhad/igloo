@@ -8,8 +8,6 @@ namespace DummyNamespace;
  */
 
 use App\Repositories\NamespacedDummyRepository;
-use App\Responses\ApiResponse;
-use App\Transformers\NamespacedDummyTransformer;
 use App\Http\Requests\NamespaceFor\DummyCreateRequest;
 use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
 use App\Services\BaseService;
@@ -21,20 +19,14 @@ class DummyService extends BaseService
      * @var DummyRepository
      */
     private $dummyRepository;
-    /**
-     * @var ApiResponse
-     */
-    private $apiResponse;
 
     /**
      * DummyService constructor.
      * @param DummyRepository $dummyRepository
-     * @param ApiResponse $apiResponse
      */
-    public function __construct(DummyRepository $dummyRepository, ApiResponse $apiResponse)
+    public function __construct(DummyRepository $dummyRepository)
     {
         $this->dummyRepository = $dummyRepository;
-        $this->apiResponse = $apiResponse;
     }
 
     /**
@@ -52,12 +44,7 @@ class DummyService extends BaseService
      */
     public function allDummys()
     {
-        try {
-            $dummys = $this->dummyRepository->getFilterWithPaginatedData([]);
-            return $this->apiResponse->withPaginator($dummys, new DummyTransformer());
-        } catch (Exception $e) {
-            return $this->apiResponse->withError('Something Went Wrong.', 422);
-        }
+        return $this->dummyRepository->getFilterWithPaginatedData([]);
     }
 
     /**
@@ -66,17 +53,13 @@ class DummyService extends BaseService
      */
     public function createDummy($request)
     {
-        try {
-            $data = $request->only(
-                [
-                    /*FILLABLE*/
-                ]
-            );
-            $dummy = $this->dummyRepository->create($data);
-            return $this->apiResponse->withItem($dummy, new DummyTransformer());
-        } catch (Exception $e) {
-            return $this->apiResponse->withError('Something Went Wrong.', 422);
-        }
+        $data = $request->only(
+            [
+                /*FILLABLE*/
+            ]
+        );
+        $dummy = $this->dummyRepository->create($data);
+        return $dummy;
     }
 
     /**
@@ -85,12 +68,8 @@ class DummyService extends BaseService
      */
     public function findDummy($id)
     {
-        try {
-            $dummy = $this->dummyRepository->find($id);
-            return $this->apiResponse->withItem($dummy, new DummyTransformer());
-        } catch (Exception $exception) {
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
-        }
+        $dummy = $this->dummyRepository->find($id);
+        return $dummy;
     }
 
     /**
@@ -100,18 +79,14 @@ class DummyService extends BaseService
      */
     public function updateDummy($id, $request)
     {
-        try {
-            $data = $request->only(
-                [
-                    /*FILLABLE*/
-                ]
-            );
+        $data = $request->only(
+            [
+                /*FILLABLE*/
+            ]
+        );
 
-            $dummy = $this->dummyRepository->update($data, $id);
-            return $this->apiResponse->withItem($dummy, new DummyTransformer());
-        } catch (Exception $e) {
-            return $this->apiResponse->errorNotFound('Dummy not found');
-        }
+        $dummy = $this->dummyRepository->update($data, $id);
+        return $dummy;
     }
 
     /**
@@ -120,14 +95,7 @@ class DummyService extends BaseService
      */
     public function deleteDummy($id)
     {
-        try {
-            $dummy = $this->dummyRepository->delete($id);
-            if ($dummy) {
-                return $this->apiResponse->message('Dummy deleted Successfully');
-            }
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
-        } catch (Exception $e) {
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
-        }
+        $dummy = $this->dummyRepository->delete($id);
+        return $dummy;
     }
 }
