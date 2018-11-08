@@ -3,6 +3,7 @@
 namespace Farhad\Igloo\Controllers;
 
 use App\Http\Controllers\Controller;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -13,10 +14,10 @@ class AutomateController extends Controller
 {
     public function ping()
     {
-        return json_encode([
+        return response()->json(json_encode([
             'data' => "Igloo is just fine.",
             "status" => 200
-        ]);
+        ]));
     }
 
     public function make()
@@ -97,7 +98,7 @@ class AutomateController extends Controller
         $transformer_command = 'php artisan make-transformer ' . $modelName . ' ' . $column_names;
         $request_command = 'php artisan make-request ' . $modelName . ' ' . $column_names;
         $request_command_update = 'php artisan make-request-update ' . $modelName . ' ' . $column_names;
-        $route_command = 'php ../artisan make-route ' . $modelName;
+        $route_command = 'php ../artisan make-route ' . array_slice(explode('/', $modelName), -1, 1)[0];
         $route_list = $this->findRouteList($route_command);
         $route_command = 'php artisan make-route ' . $modelName;
         $controller_command = 'php artisan make-controller ' . $modelName;
@@ -115,16 +116,22 @@ class AutomateController extends Controller
                 'status' => false
             ]);
             if ($save) {
-                return '<h2> Successfully Created the skeleton. </h2>' .
+                return response()->json(
+                    '<h2> Successfully Created the skeleton. </h2>' .
                     '<h3>To generate all class run the following command</h3> <br>' .
                     '<code>php artisan igloo</code> <br><br>' .
                     '<h3>API Routes for ' . $modelName . ' CRUD</h3> <br>' .
-                    '<code>' . $route_list . '</code>';
+                    '<code>' . $route_list . '</code>'
+                );
             }
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return response()->json(
+                $e->getMessage()
+            );
         }
-        return '<h2> There is something went wrong. </h2>';
+        return response()->json(
+            '<h2> There is something went wrong. </h2>'
+        );
     }
 
     public function findRouteList($cmd)
