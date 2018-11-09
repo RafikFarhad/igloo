@@ -86,7 +86,7 @@ class ControllerCommand extends GeneratorClass
             [
                 $namespace,
                 $full_name.'Transformer',
-                $name,
+                $name.'Controller',
                 Carbon::now()->toDateTimeString(),
                 $full_name,
                 $full_name.'Service',
