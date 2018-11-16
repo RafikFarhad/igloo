@@ -1,0 +1,34 @@
+<?php
+/**
+ * Created with Igloo Generator.
+ * Date: DUMMYDATE
+ */
+
+namespace DummyNamespace;
+
+use App\Models\DummyModel;
+use App\Repositories\Repository;
+
+class DummyRepository extends Repository
+{
+    /**
+     * Specify Model class name
+     *
+     * @return mixed
+     */
+    public function model()
+    {
+        return DummyModelWithClass;
+    }
+
+    /**
+     * Filter data based on user input
+     *
+     * @param array $filter
+     * @param       $query
+     */
+    public function filterData(array $filter, $query)
+    {
+        // TODO: Implement filterData() method.
+    }
+}

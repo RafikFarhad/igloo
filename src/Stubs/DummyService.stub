@@ -1,0 +1,101 @@
+<?php
+
+namespace DummyNamespace;
+
+/**
+ * Created with Igloo Generator.
+ * Date: DUMMYDATE
+ */
+
+use App\Repositories\NamespacedDummyRepository;
+use App\Http\Requests\NamespaceFor\DummyCreateRequest;
+use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
+use App\Services\BaseService;
+use Exception;
+
+class DummyService extends BaseService
+{
+    /**
+     * @var DummyRepository
+     */
+    private $dummyRepository;
+
+    /**
+     * DummyService constructor.
+     * @param DummyRepository $dummyRepository
+     */
+    public function __construct(DummyRepository $dummyRepository)
+    {
+        $this->dummyRepository = $dummyRepository;
+    }
+
+    /**
+     * return Repository instance
+     *
+     * @return mixed
+     */
+    public function baseRepository()
+    {
+        return $this->dummyRepository;
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function allDummys()
+    {
+        return $this->dummyRepository->getFilterWithPaginatedData([]);
+    }
+
+    /**
+     * @param DummyCreateRequest $request
+     * @return mixed
+     */
+    public function createDummy($request)
+    {
+        $data = $request->only(
+            [
+                /*FILLABLE*/
+            ]
+        );
+        $dummy = $this->dummyRepository->create($data);
+        return $dummy;
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function findDummy($id)
+    {
+        $dummy = $this->dummyRepository->find($id);
+        return $dummy;
+    }
+
+    /**
+     * @param $id
+     * @param DummyUpdateRequest $request
+     * @return mixed
+     */
+    public function updateDummy($id, $request)
+    {
+        $data = $request->only(
+            [
+                /*FILLABLE*/
+            ]
+        );
+
+        $dummy = $this->dummyRepository->update($data, $id);
+        return $dummy;
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function deleteDummy($id)
+    {
+        $dummy = $this->dummyRepository->delete($id);
+        return $dummy;
+    }
+}
