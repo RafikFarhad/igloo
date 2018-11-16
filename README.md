@@ -21,7 +21,7 @@
 1) To install *Igloo Code Generator*, run the following command:
 
 ```shell
-composer require farhad/igloo
+composer require infancyit/igloo
 ```
 
 2) Run the command below to load all configuration file: 
