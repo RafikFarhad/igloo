@@ -98,4 +98,23 @@ class DummyService extends BaseService
         $dummy = $this->dummyRepository->delete($id);
         return $dummy;
     }
+
+    /**
+     *
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function dropDown()
+    {
+        $dummy = $this->dummyRepository
+            ->getQuery()
+            ->get(['id', 'name'])
+            ->toArray();
+        /*
+         * Uncomment the following line to add a null value
+         * in the top of the drop down.
+         */
+//        array_unshift($dummy, ['']);
+        return $dummy;
+    }
+
 }

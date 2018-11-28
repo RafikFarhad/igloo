@@ -14,6 +14,7 @@ use App\Http\Requests\NamespaceFor\DummyUpdateRequest;
 use App\Services\DummyServiceWithNamespace;
 use Exception;
 use App\Transformers\NamespacedDummyTransformer;
+use App\Transformers\Api\V1\DropDownTransformer;
 
 class DummyController extends Controller
 {
@@ -36,43 +37,49 @@ class DummyController extends Controller
 
     /**
      * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws Exception
      */
+
     public function index()
     {
         try {
-                $dummys = $this->dummyService->allDummys();
-                return $this->apiResponse->withPaginator($dummys, new DummyTransformer());
-            } catch (Exception $e) {
-                return $this->apiResponse->withError('Something Went Wrong.', 422);
-            }
+            $dummys = $this->dummyService->allDummys();
+            return $this->apiResponse->withPaginator($dummys, new DummyTransformer());
+        } catch (Exception $e) {
+            throw new Exception('Something Went Wrong.', 422);
+        }
     }
 
     /**
      * @param DummyCreateRequest $request
      * @return mixed
+     * @throws Exception
      */
+
     public function create(DummyCreateRequest $request)
     {
        try {
             $dummy = $this->dummyService->createDummy($request);
             return $this->apiResponse->withItem($dummy, new DummyTransformer());
         } catch (Exception $e) {
-            return $this->apiResponse->withError('Something Went Wrong.', 422);
-        }
+            throw new Exception('Something Went Wrong.', 422);
+       }
     }
 
 
     /**
      * @param $id
      * @return mixed
+     * @throws Exception
      */
+
     public function show($id)
     {
         try {
             $dummy = $this->dummyService->findDummy($id);
             return $this->apiResponse->withItem($dummy, new DummyTransformer());
         } catch (Exception $exception) {
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
+            throw new Exception('Dummy Not Found.', 422);
         }
     }
 
@@ -81,21 +88,25 @@ class DummyController extends Controller
      * @param $id
      * @param DummyUpdateRequest $request
      * @return mixed
+     * @throws Exception
      */
+
     public function update($id, DummyUpdateRequest $request)
     {
         try {
-            $dummy = $this->dummyService->update($id, $request);
+            $dummy = $this->dummyService->updateDummy($id, $request);
             return $this->apiResponse->withItem($dummy, new DummyTransformer());
         } catch (Exception $e) {
-            return $this->apiResponse->errorNotFound('Dummy not found');
+            throw new Exception('Dummy Not Found.', 422);
         }
     }
 
     /**
      * @param $id
      * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws Exception
      */
+
     public function delete($id)
     {
         try {
@@ -103,9 +114,26 @@ class DummyController extends Controller
             if ($dummy) {
                 return $this->apiResponse->message('Dummy deleted Successfully');
             }
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
+            throw new Exception('Dummy Not Found.', 422);
         } catch (Exception $e) {
-            return $this->apiResponse->errorNotFound('Dummy Not Found');
+            throw new Exception('Dummy Not Found.', 422);
         }
     }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     * @throws Exception
+     */
+
+    public function dropDown()
+    {
+        try {
+            $dummys = $this->dummyService->dropDown();
+            return $this->apiResponse->withCollection($dummys, new DropDownTransformer());
+        } catch (Exception $e) {
+            throw new Exception('Something Went Wrong.', 422);
+        }
+    }
+
 }

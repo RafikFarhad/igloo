@@ -20,6 +20,11 @@ class AutomateController extends Controller
         ]));
     }
 
+    public function index()
+    {
+        return 'igloo';
+    }
+
     public function make()
     {
         $data = Input::all();
