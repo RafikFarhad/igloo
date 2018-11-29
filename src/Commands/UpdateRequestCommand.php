@@ -23,14 +23,14 @@ class UpdateRequestCommand extends GeneratorClass
      *
      * @var string
      */
-    protected $description = 'Create new Form Request with attributes.';
+    protected $description = 'Create new Form Requests with attributes.';
 
 
     protected $namespace = 'Http\Requests\\';
 
     protected $files;
 
-    protected $type = 'Update Request';
+    protected $type = 'Update Requests';
 
     /**
      * Create a new command instance.

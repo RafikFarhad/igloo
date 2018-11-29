@@ -27,8 +27,7 @@ class DummyUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'id'                     => 'required',/*DummyColumnValues*/
+        return [/*DummyColumnValues*/
         ];
     }
 }

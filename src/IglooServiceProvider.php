@@ -23,16 +23,18 @@ class IglooServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../publish/Rep/' => app_path('Repositories'),
-            __DIR__ . '/../publish/Ser/' => app_path('Services'),
-            __DIR__ . '/../publish/BS/' => app_path('BaseSettings'),
-            __DIR__ . '/../publish/Res/' => app_path('Responses'),
-            __DIR__ . '/../publish/Tran/' => app_path('Transformers'),
-            __DIR__ . '/../publish/Req/' => app_path('Http/Requests'),
-            __DIR__ . '/../publish/config/' => app_path('../config'),
-        ], 'InfancyIt-Igloo');
-        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+            __DIR__ . '/../publish/Repositories/' => app_path('Repositories'),
+            __DIR__ . '/../publish/Services/' => app_path('Services'),
+            __DIR__ . '/../publish/BaseSettings/' => app_path('BaseSettings'),
+            __DIR__ . '/../publish/Responses/' => app_path('Responses'),
+            __DIR__ . '/../publish/Transformers/' => app_path('Transformers'),
+            __DIR__ . '/../publish/Requests/' => app_path('Http/Requests'),
+            __DIR__ . '/../publish/config/' => config_path(),
+            __DIR__ . '/resources/assets' => public_path('vendor/igloo'),
+        ], 'Igloo');
 
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'igloo');
     }
 
     /**

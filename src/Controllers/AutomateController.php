@@ -14,15 +14,15 @@ class AutomateController extends Controller
 {
     public function ping()
     {
-        return response()->json(json_encode([
+        return response()->json([
             'data' => "Igloo is just fine.",
             "status" => 200
-        ]));
+        ]);
     }
 
-    public function index()
+    public function igloo()
     {
-        return 'igloo';
+        return view('igloo::index');
     }
 
     public function make()
@@ -35,7 +35,7 @@ class AutomateController extends Controller
         ];
         $validation = Validator::make($data, $rules);
         if ($validation->fails()) {
-            return json_encode([
+            return response()->json([
                 'status' => 400,
                 'error' => $validation->errors()
             ]);
@@ -114,8 +114,8 @@ class AutomateController extends Controller
                 'Service' => $service_command,
                 'Migration' => $schema_command,
                 'Transformer' => $transformer_command,
-                'Request' => $request_command,
-                'Request Update' => $request_command_update,
+                'Requests' => $request_command,
+                'Requests Update' => $request_command_update,
                 'Controller' => $controller_command,
                 'Route' => $route_command,
                 'status' => false
