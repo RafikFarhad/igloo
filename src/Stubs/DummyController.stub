@@ -112,7 +112,7 @@ class DummyController extends Controller
         try {
             $dummy = $this->dummyService->deleteDummy($id);
             if ($dummy) {
-                return $this->apiResponse->message('Dummy deleted Successfully');
+                return $this->apiResponse->success('Dummy deleted successfully');
             }
             throw new Exception('Dummy Not Found.', 422);
         } catch (Exception $e) {

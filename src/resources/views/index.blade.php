@@ -72,7 +72,7 @@
                         <div id="form-step-0" role="form" data-toggle="validator">
                             <div class="form-group">
                                 <div class="col-md-6 com-sm-12">
-                                    <input type="text" id="url" value="http://127.0.0.1:8000" class="form-control" required>
+                                    <input type="text" id="url" value="{{ url('') }}" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 com-sm-12">
                                     <button id="testBtn" class="btn btn-warning">
@@ -367,7 +367,7 @@
                         });
                     }
                     $.ajax({
-                        url: rootUrl + '/api/igloo/make',
+                        url: rootUrl + '/igloo/api/make',
                         crossDomain: true,
                         dataType: 'json',
                         type: 'post',
@@ -421,7 +421,7 @@
                 btn.html('<i class="fa fa-spinner fa-spin"></i> Trying to connect')
                 setTimeout(function () {
                     $.ajax({
-                        url: url + '/api/igloo/ping',
+                        url: url + '/igloo/api/ping',
                         dataType: 'text',
                         type: 'get',
                         async: false,
